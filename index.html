@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Apex FX Edge</title>
+
+    <link rel="apple-touch-icon" href="YOUR_LOGO_URL_HERE.png">
+    
+    <link rel="icon" href="YOUR_LOGO_URL_HERE.png">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        :root {
+            --bg-color: #1a1a1a;
+            --surface-color: #2c2c2c;
+            --primary-color: #e6c300;
+            --text-color: #f0f0f0;
+            --label-color: #a0a0a0;
+            --border-color: #444;
+            --success-color: #28a745;
+            --aqua-blue: #00FFFF;
+        }
+
+        /* Utility class to hide elements */
+        .hidden {
+            display: none;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .calculator-container {
+            background-color: var(--surface-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+            color: var(--aqua-blue);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: var(--label-color);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-size: 1em;
+            box-sizing: border-box;
+        }
+
+        /* Style for new Radio Buttons */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            font-size: 1em;
+            color: var(--text-color);
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 8px;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(230, 195, 0, 0.25);
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        #calculate-btn {
+            background-color: var(--primary-color);
+            color: #1a1a1a;
+        }
+        
+        #calculate-btn:hover {
+            opacity: 0.85;
+        }
+        
+        #reset-btn {
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+
+        #reset-btn:hover {
+            background-color: #555;
+        }
+
+        .affiliate-links {
+            text-align: center;
+            margin-top: 25px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 20px;
+        }
+        .affiliate-links h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--label-color);
+            font-size: 1em;
+        }
+        
+        /* --- AFFILIATE LINK STYLE CHANGES --- */
+        .affiliate-links a {
+            display: block;
+            background-color: var(--aqua-blue); /* Aqua Blue Background */
+            color: #1a1a1a; /* Black Text */
+            text-decoration: none;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            transition: opacity 0.2s ease;
+        }
+        .affiliate-links a:hover {
+            opacity: 0.85; /* Fade slightly on hover */
+        }
+        /* --- END OF STYLE CHANGES --- */
+
+        .results {
+            margin-top: 30px;
+            background-color: var(--bg-color);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            display: none; /* Hide results by default */
+        }
+        
+        .results h2 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.2em;
+            color: var(--label-color);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1em;
+            margin-bottom: 12px;
+        }
+        
+        .result-item span:first-child {
+            color: var(--label-color);
+        }
+
+        .result-item span:last-child {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--text-color);
+        }
+        
+        .result-item.reward span:last-child {
+             color: var(--success-color);
+        }
+
+        #error-message {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator-container">
+        <h1>Apex FX Edge</h1>
+        <form id="calculator-form">
+            <div class="input-group">
+                <label for="pair-type">Pair Type</label>
+                <select id="pair-type">
+                    <option value="digits5">5 Digit Pairs (All Others)</option>
+                    <option value="digits3">3 Digit Pairs (JPY/Gold)</option>
+                    <option value="digits1">1 Digit Pairs (BTC/Indices)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="trade-direction">Buy/Sell</label>
+                <select id="trade-direction">
+                    <option value="buy">Buy</option>
+                    <option value="sell">Sell</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Calculate By:</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" id="calc-mode-rr" name="calc-mode" value="rr" checked> R:R Ratio
+                    </label>
+                    <label>
+                        <input type="radio" id="calc-mode-profit" name="calc-mode" value="profit"> Profit Target ($)
+                    </label>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="entry-price">Entry Price</label>
+                <input type="number" id="entry-price" step="any" placeholder="e.g., 0.65555" required>
+            </div>
+            <div class="input-group">
+                <label for="sl-price">SL Price</label>
+                <input type="number" id="sl-price" step="any" placeholder="e.g., 0.65701" required>
+            </div>
+            <div class="input-group">
+                <label for="risk-amount">Risk ($)</label>
+                <input type="number" id="risk-amount" step="any" placeholder="e.g., 50" required>
+            </div>
+            
+            <div class="input-group" id="rr-group">
+                <label for="rr-ratio">R:R</label>
+                <input type="number" id="rr-ratio" step="any" placeholder="e.g., 4" required>
+            </div>
+
+            <div class="input-group hidden" id="profit-group">
+                <label for="desired-profit">Profit Target ($)</label>
+                <input type="number" id="desired-profit" step="any" placeholder="e.g., 200">
+            </div>
+
+            <div id="error-message"></div>
+            <div class="button-group">
+                <button type="submit" id="calculate-btn">Calculate</button>
+                <button type="button" id="reset-btn">Reset</button>
+            </div>
+
+            <div class="affiliate-links">
+                <h3>Recommended Partners</h3>
+                
+                <a href="https://herofx.co/?partner_code=2969613"_blank">HEROFX</a>
+                
+                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge"_blank">AQUAFUNDED</a>
+            </div>
+            </form>
+        
+        <div class="results" id="results-display">
+            <h2>Trade Details</h2>
+            <div class="result-item reward">
+                <span>Reward ($):</span>
+                <span id="reward-result"></span>
+            </div>
+             <div class="result-item">
+                <span>Lot Size:</span>
+                <span id="lot-size-result"></span>
+            </div>
+            <div class="result-item">
+                <span>R:R Ratio:</span>
+                <span id="rr-ratio-result"></span>
+            </div>
+            <div class="result-item">
+                <span>TP Price:</span>
+                <span id="tp-price-result"></span>
+            </div>
+        </div>
+        </div>
+
+    <script>
+        // Wait for the full HTML document to load before running script
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Get all elements ---
+            const form = document.getElementById('calculator-form');
+            const resetButton = document.getElementById('reset-btn');
+            const resultsDiv = document.getElementById('results-display');
+            const errorMessage = document.getElementById('error-message');
+
+            const rewardResult = document.getElementById('reward-result');
+            const lotSizeResult = document.getElementById('lot-size-result');
+            const tpPriceResult = document.getElementById('tp-price-result');
+            
+            // --- New Elements for Toggle Feature ---
+            const calcModeRR = document.getElementById('calc-mode-rr');
+            const calcModeProfit = document.getElementById('calc-mode-profit');
+            const rrGroup = document.getElementById('rr-group');
+            const profitGroup = document.getElementById('profit-group');
+            const rrRatioInput = document.getElementById('rr-ratio');
+            const desiredProfitInput = document.getElementById('desired-profit');
+            const rrRatioResult = document.getElementById('rr-ratio-result');
+
+            // --- Logic to toggle input fields ---
+            calcModeRR.addEventListener('change', () => {
+                if (calcModeRR.checked) {
+                    rrGroup.classList.remove('hidden');
+                    profitGroup.classList.add('hidden');
+                    rrRatioInput.setAttribute('required', 'required');
+                    desiredProfitInput.removeAttribute('required');
+                }
+            });
+
+            calcModeProfit.addEventListener('change', () => {
+                if (calcModeProfit.checked) {
+                    rrGroup.classList.add('hidden');
+                    profitGroup.classList.remove('hidden');
+                    rrRatioInput.removeAttribute('required');
+                    desiredProfitInput.setAttribute('required', 'required');
+                }
+            });
+
+            // --- Main Calculation on Submit ---
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Stop the page from reloading
+                
+                // --- Get Base Values ---
+                const pairType = document.getElementById('pair-type').value;
+                const direction = document.getElementById('trade-direction').value;
+                const entryPrice = parseFloat(document.getElementById('entry-price').value);
+                const slPrice = parseFloat(document.getElementById('sl-price').value);
+                const riskAmount = parseFloat(document.getElementById('risk-amount').value);
+                
+                // --- Validation ---
+                if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount)) {
+                    showError("Please fill in all number fields.");
+                    return;
+                }
+                if (riskAmount <= 0) {
+                     showError("Risk Amount must be greater than 0.");
+                     return;
+                }
+                if (direction === 'buy' && entryPrice <= slPrice) {
+                    showError("For a Buy, SL Price must be below Entry Price.");
+                    return;
+                }
+                if (direction === 'sell' && entryPrice >= slPrice) {
+                    showError("For a Sell, SL Price must be above Entry Price.");
+                    return;
+                }
+                clearError();
+
+                // --- New Dynamic R:R / Profit Calculation ---
+                let rrRatio;
+                let rewardAmount;
+                const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
+
+                if (calcMode === 'rr') {
+                    rrRatio = parseFloat(rrRatioInput.value);
+                    if (isNaN(rrRatio) || rrRatio <= 0) {
+                        showError("Please enter a valid R:R Ratio.");
+                        return;
+                    }
+                    rewardAmount = riskAmount * rrRatio;
+                } else { // calcMode === 'profit'
+                    rewardAmount = parseFloat(desiredProfitInput.value);
+                    if (isNaN(rewardAmount) || rewardAmount <= 0) {
+                        showError("Please enter a valid Profit Target.");
+                        return;
+                    }
+                    rrRatio = rewardAmount / riskAmount; // Calculate R:R as an output
+                }
+                // --- End of New Block ---
+
+
+                // --- Core Logic (Unchanged) ---
+                let pointValue;
+                let decimalPlaces;
+                let lotSize;
+                const stopDistancePrice = Math.abs(entryPrice - slPrice);
+
+                if (pairType === 'digits5') { // e.g. EURUSD
+                    pointValue = 0.0001;
+                    decimalPlaces = 5;
+                    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                } else if (pairType === 'digits3') { // e.g. USDJPY, XAUUSD
+                    pointValue = 0.01;
+                    decimalPlaces = 3;
+                    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                } else { // 'digits1' for BTC, US30
+                    pointValue = 1; 
+                    decimalPlaces = 2;
+                    lotSize = riskAmount / stopDistancePrice;
+                }
+
+                const tpDistancePrice = stopDistancePrice * rrRatio;
+                const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
+
+                // --- Display All Results ---
+                rewardResult.textContent = '$' + rewardAmount.toFixed(2);
+                lotSizeResult.textContent = lotSize.toFixed(2);
+                rrRatioResult.textContent = '1:' + rrRatio.toFixed(0); // R:R set to whole number
+                tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
+                resultsDiv.style.display = 'block'; // Show the results
+            });
+            
+            // --- Reset Button Logic ---
+            resetButton.addEventListener('click', () => {
+                form.reset();
+                resultsDiv.style.display = 'none';
+                clearError();
+                // Reset toggle to default
+                calcModeRR.checked = true; // Make sure radio is reset
+                rrGroup.classList.remove('hidden');
+                profitGroup.classList.add('hidden');
+                rrRatioInput.setAttribute('required', 'required');
+                desiredProfitInput.removeAttribute('required');
+            });
+
+            function showError(message) {
+                errorMessage.textContent = message;
+                resultsDiv.style.display = 'none'; // Hide results if error
+            }
+            function clearError() {
+                errorMessage.textContent = '';
+            }
+        });
+    </script>
+
+</body>
+</html>
