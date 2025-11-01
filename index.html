@@ -290,7 +290,7 @@
             </form>
         
         <div class="results" id="results-display">
-            <h2>Trade Details</h2>
+            <h2 id="results-section">Trade Details</h2>
             <div class="result-item reward">
                 <span>Reward ($):</span>
                 <span id="reward-result"></span>
@@ -434,6 +434,8 @@
                 rrRatioResult.textContent = '1:' + rrRatio.toFixed(0); // R:R set to whole number
                 tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
                 resultsDiv.style.display = 'block'; // Show the results
+                resultsDiv.scrollIntoView({ behavior: 'smooth' });
+                
             });
             
             // --- Reset Button Logic ---
@@ -462,6 +464,7 @@
 </body>
 
 </html>
+
 
 
 
