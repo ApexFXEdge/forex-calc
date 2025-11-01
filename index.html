@@ -460,10 +460,23 @@
             }
         });
     </script>
-
+    
+<script>
+  // Make sure service workers are supported
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      // Use the correct path to your sw.js file
+      navigator.serviceWorker.register('/forex-calc/sw.js')
+        .then(reg => console.log('Service worker registered.'))
+        .catch(err => console.log('Service worker registration failed: ', err));
+    });
+  }
+</script>
+    
 </body>
 
 </html>
+
 
 
 
