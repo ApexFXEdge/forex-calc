@@ -29,7 +29,6 @@
             --aqua-blue: #00FFFF;
         }
 
-        /* Utility class to hide elements */
         .hidden {
             display: none;
         }
@@ -85,23 +84,26 @@
             box-sizing: border-box;
         }
 
-        /* Style for new Radio Buttons */
+        /* --- FIX FOR RADIO BUTTONS --- */
         .radio-group {
             display: flex;
-            gap: 20px;
+            flex-direction: column; /* This stacks them vertically */
+            gap: 15px; /* This creates space BETWEEN the two options */
         }
         .radio-group label {
             display: flex;
             align-items: center;
             margin: 0;
-            font-size: 1em;
+            font-size: 1.1em; /* Slightly larger text */
             color: var(--text-color);
+            cursor: pointer; /* Makes the whole line clickable */
         }
         .radio-group input[type="radio"] {
             width: auto;
-            margin-right: 8px;
-            transform: scale(1.3); /* <-- FIX: Makes buttons bigger */
+            margin-right: 10px; /* Space between button and text */
+            transform: scale(1.5); /* Made buttons 50% bigger */
         }
+        /* --- END OF RADIO BUTTON FIX --- */
         
         input:focus, select:focus {
             outline: none;
@@ -157,11 +159,10 @@
             font-size: 1em;
         }
         
-        /* --- AFFILIATE LINK STYLE CHANGES --- */
         .affiliate-links a {
             display: block;
-            background-color: var(--aqua-blue); /* Aqua Blue Background */
-            color: #1a1a1a; /* Black Text */
+            background-color: var(--aqua-blue);
+            color: #1a1a1a; 
             text-decoration: none;
             padding: 12px;
             border-radius: 8px;
@@ -170,9 +171,8 @@
             transition: opacity 0.2s ease;
         }
         .affiliate-links a:hover {
-            opacity: 0.85; /* Fade slightly on hover */
+            opacity: 0.85;
         }
-        /* --- END OF STYLE CHANGES --- */
 
         .results {
             margin-top: 30px;
@@ -180,7 +180,7 @@
             padding: 20px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            display: none; /* Hide results by default */
+            display: none; 
         }
         
         .results h2 {
@@ -313,11 +313,11 @@
                 <span id="tp-price-result"></span>
             </div>
         </div>
-    </div> <script>
-        // Wait for the full HTML document to load before running script
+    </div> 
+
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- Get all elements ---
             const form = document.getElementById('calculator-form');
             const resetButton = document.getElementById('reset-btn');
             const resultsDiv = document.getElementById('results-display');
@@ -327,7 +327,6 @@
             const lotSizeResult = document.getElementById('lot-size-result');
             const tpPriceResult = document.getElementById('tp-price-result');
             
-            // --- New Elements for Toggle Feature ---
             const calcModeRR = document.getElementById('calc-mode-rr');
             const calcModeProfit = document.getElementById('calc-mode-profit');
             const rrGroup = document.getElementById('rr-group');
@@ -336,7 +335,6 @@
             const desiredProfitInput = document.getElementById('desired-profit');
             const rrRatioResult = document.getElementById('rr-ratio-result');
 
-            // --- Logic to toggle input fields ---
             calcModeRR.addEventListener('change', () => {
                 if (calcModeRR.checked) {
                     rrGroup.classList.remove('hidden');
@@ -355,18 +353,15 @@
                 }
             });
 
-            // --- Main Calculation on Submit ---
             form.addEventListener('submit', (e) => {
-                e.preventDefault(); // Stop the page from reloading
+                e.preventDefault(); 
                 
-                // --- Get Base Values ---
                 const pairType = document.getElementById('pair-type').value;
                 const direction = document.getElementById('trade-direction').value;
                 const entryPrice = parseFloat(document.getElementById('entry-price').value);
                 const slPrice = parseFloat(document.getElementById('sl-price').value);
                 const riskAmount = parseFloat(document.getElementById('risk-amount').value);
                 
-                // --- Validation ---
                 if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount)) {
                     showError("Please fill in all number fields.");
                     return;
@@ -385,7 +380,6 @@
                 }
                 clearError();
 
-                // --- New Dynamic R:R / Profit Calculation ---
                 let rrRatio;
                 let rewardAmount;
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
@@ -397,32 +391,29 @@
                         return;
                     }
                     rewardAmount = riskAmount * rrRatio;
-                } else { // calcMode === 'profit'
+                } else { 
                     rewardAmount = parseFloat(desiredProfitInput.value);
                     if (isNaN(rewardAmount) || rewardAmount <= 0) {
                         showError("Please enter a valid Profit Target.");
                         return;
                     }
-                    rrRatio = rewardAmount / riskAmount; // Calculate R:R as an output
+                    rrRatio = rewardAmount / riskAmount; 
                 }
-                // --- End of New Block ---
 
-
-                // --- Core Logic (Unchanged) ---
                 let pointValue;
                 let decimalPlaces;
                 let lotSize;
                 const stopDistancePrice = Math.abs(entryPrice - slPrice);
 
-                if (pairType === 'digits5') { // e.g. EURUSD
+                if (pairType === 'digits5') { 
                     pointValue = 0.0001;
                     decimalPlaces = 5;
                     lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
-                } else if (pairType === 'digits3') { // e.g. USDJPY, XAUUSD
+                } else if (pairType === 'digits3') { 
                     pointValue = 0.01;
                     decimalPlaces = 3;
                     lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
-                } else { // 'digits1' for BTC, US30
+                } else { 
                     pointValue = 1; 
                     decimalPlaces = 2;
                     lotSize = riskAmount / stopDistancePrice;
@@ -431,23 +422,20 @@
                 const tpDistancePrice = stopDistancePrice * rrRatio;
                 const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
 
-                // --- Display All Results ---
                 rewardResult.textContent = '$' + rewardAmount.toFixed(2);
                 lotSizeResult.textContent = lotSize.toFixed(2);
-                rrRatioResult.textContent = '1:' + rrRatio.toFixed(0); // R:R set to whole number
+                rrRatioResult.textContent = '1:' + rrRatio.toFixed(0); 
                 tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
-                resultsDiv.style.display = 'block'; // Show the results
+                resultsDiv.style.display = 'block'; 
                 resultsDiv.scrollIntoView({ behavior: 'smooth' });
                 
             });
             
-            // --- Reset Button Logic ---
             resetButton.addEventListener('click', () => {
                 form.reset();
                 resultsDiv.style.display = 'none';
                 clearError();
-                // Reset toggle to default
-                calcModeRR.checked = true; // Make sure radio is reset
+                calcModeRR.checked = true; 
                 rrGroup.classList.remove('hidden');
                 profitGroup.classList.add('hidden');
                 rrRatioInput.setAttribute('required', 'required');
@@ -456,7 +444,7 @@
 
             function showError(message) {
                 errorMessage.textContent = message;
-                resultsDiv.style.display = 'none'; // Hide results if error
+                resultsDiv.style.display = 'none'; 
             }
             function clearError() {
                 errorMessage.textContent = '';
@@ -465,10 +453,8 @@
     </script>
     
 <script>
-  // Make sure service workers are supported
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      // Use the correct path to your sw.js file
       navigator.serviceWorker.register('/forex-calc/sw.js')
         .then(reg => console.log('Service worker registered.'))
         .catch(err => console.log('Service worker registration failed: ', err));
@@ -478,4 +464,3 @@
 
 </body>
 </html>
-
