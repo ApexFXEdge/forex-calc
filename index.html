@@ -218,107 +218,243 @@
             margin-top: 15px;
             min-height: 20px;
         }
+        
+        /* --- NEW STYLES FOR TABS AND COMPOUND CALC --- */
+        .calc-nav {
+            display: flex;
+            width: 100%;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            background-color: var(--bg-color);
+        }
+        .calc-tab {
+            width: 50%;
+            padding: 12px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            background-color: transparent;
+            color: var(--label-color);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .calc-tab.active {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+        }
+        .button-group.single {
+            grid-template-columns: 1fr;
+        }
+        #compound-calc-btn {
+            background-color: var(--primary-color);
+            color: #1a1a1a;
+            width: 100%;
+        }
+        #compound-calc-btn:hover {
+            opacity: 0.85;
+        }
+        .compound-results-summary {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .compound-results-summary label {
+            font-size: 0.9em;
+            color: var(--label-color);
+            margin-bottom: 5px;
+        }
+        .compound-results-summary span {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .compound-results-summary div:first-child span {
+            color: var(--success-color);
+        }
+        .compound-results-table {
+            margin-top: 20px;
+        }
+        .table-row {
+            display: grid;
+            grid-template-columns: 0.5fr 1fr 1fr 1fr;
+            text-align: right;
+            padding: 10px 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .table-row.header {
+            font-weight: 600;
+            color: var(--label-color);
+            font-size: 0.8em;
+        }
+        .table-row span:first-child {
+            text-align: left;
+            color: var(--label-color);
+        }
+        .table-row.header span:first-child {
+            color: var(--label-color);
+        }
+        /* --- END OF NEW STYLES --- */
+        
     </style>
 </head>
 <body>
 
     <div class="calculator-container">
         <h1>Apex FX Calculator</h1>
-        <form id="calculator-form">
-            <div class="input-group">
-                <label for="pair-type">Pair Type</label>
-                <select id="pair-type">
-                    <option value="digits5">5 Digit Pairs (e.g., AUD, EUR)</option>
-                    <option value="digits3">3 Digit Pairs (e.g., JPY, XAU)</option>
-                    <option value="digits1">1 Digit Pairs (e.g., BTC, US30)</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label for="trade-direction">Buy/Sell</label>
-                <select id="trade-direction">
-                    <option value="buy">Buy</option>
-                    <option value="sell">Sell</option>
-                </select>
-            </div>
+        
+        <nav class="calc-nav">
+            <button id="tab-position-calc" class="calc-tab active">Position Size</button>
+            <button id="tab-compound-calc" class="calc-tab">Compounding</button>
+        </nav>
 
-            <div class="input-group">
-                <label>Calculate By:</label>
-                <div class="radio-group">
-                    <label>
-                        <input type="radio" id="calc-mode-rr" name="calc-mode" value="rr" checked> R:R Ratio
-                    </label>
-                    <label>
-                        <input type="radio" id="calc-mode-profit" name="calc-mode" value="profit"> Profit Target ($)
-                    </label>
+        <div id="position-calc-wrapper">
+            <form id="calculator-form">
+                <div class="input-group">
+                    <label for="pair-type">Pair Type</label>
+                    <select id="pair-type">
+                        <option value="digits5">5 Digit Pairs (e.g., AUD, EUR)</option>
+                        <option value="digits3">3 Digit Pairs (e.g., JPY, XAU)</option>
+                        <option value="digits1">1 Digit Pairs (e.g., BTC, US30)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="trade-direction">Buy/Sell</label>
+                    <select id="trade-direction">
+                        <option value="buy">Buy</option>
+                        <option value="sell">Sell</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Calculate By:</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" id="calc-mode-rr" name="calc-mode" value="rr" checked> R:R Ratio
+                        </label>
+                        <label>
+                            <input type="radio" id="calc-mode-profit" name="calc-mode" value="profit"> Profit Target ($)
+                        </label>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="entry-price">Entry Price</label>
+                    <input type="number" id="entry-price" step="any" placeholder="e.g., 0.65555" required>
+                </div>
+                <div class="input-group">
+                    <label for="sl-price">SL Price</label>
+                    <input type="number" id="sl-price" step="any" placeholder="e.g., 0.65701" required>
+                </div>
+                <div class="input-group">
+                    <label for="risk-amount">Risk ($)</label>
+                    <input type="number" id="risk-amount" step="any" placeholder="e.g., 50" required>
+                </div>
+                
+                <div class="input-group" id="rr-group">
+                    <label for="rr-ratio">R:R</label>
+                    <input type="number" id="rr-ratio" step="any" placeholder="e.g., 4" required>
+                </div>
+
+                <div class="input-group hidden" id="profit-group">
+                    <label for="desired-profit">Profit Target ($)</label>
+                    <input type="number" id="desired-profit" step="any" placeholder="e.g., 200">
+                </div>
+
+                <div id="error-message"></div>
+                <div class="button-group">
+                    <button type="submit" id="calculate-btn">Calculate</button>
+                    <button type="button" id="reset-btn">Reset</button>
+                </div>
+
+                <div class="affiliate-links">
+                    <h3>Recommended Partners</h3>
+                    
+                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                    <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                    <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+                </div>
+                
+            </form>
+            
+            <div class="results" id="results-display">
+                <h2 id="results-section">Trade Details</h2>
+                <div class="result-item reward">
+                    <span>Reward ($):</span>
+                    <span id="reward-result"></span>
+                </div>
+                 <div class="result-item">
+                    <span>Lot Size:</span>
+                    <span id="lot-size-result"></span>
+                </div>
+                <div class="result-item">
+                    <span>R:R Ratio:</span>
+                    <span id="rr-ratio-result"></span>
+                </div>
+                <div class="result-item">
+                    <span>TP Price:</span>
+                    <span id="tp-price-result"></span>
                 </div>
             </div>
-            <div class="input-group">
-                <label for="entry-price">Entry Price</label>
-                <input type="number" id="entry-price" step="any" placeholder="e.g., 0.65555" required>
-            </div>
-            <div class="input-group">
-                <label for="sl-price">SL Price</label>
-                <input type="number" id="sl-price" step="any" placeholder="e.g., 0.65701" required>
-            </div>
-            <div class="input-group">
-                <label for="risk-amount">Risk ($)</label>
-                <input type="number" id="risk-amount" step="any" placeholder="e.g., 50" required>
-            </div>
+        </div> <div id="compound-calc-wrapper" class="hidden">
             
-            <div class="input-group" id="rr-group">
-                <label for="rr-ratio">R:R</label>
-                <input type="number" id="rr-ratio" step="any" placeholder="e.g., 4" required>
+            <div class="input-group">
+                <label for="compound-start-balance">Starting balance</label>
+                <input type="number" id="compound-start-balance" placeholder="e.g., 20000">
             </div>
 
-            <div class="input-group hidden" id="profit-group">
-                <label for="desired-profit">Profit Target ($)</label>
-                <input type="number" id="desired-profit" step="any" placeholder="e.g., 200">
-            </div>
-
-            <div id="error-message"></div>
             <div class="button-group">
-                <button type="submit" id="calculate-btn">Calculate</button>
-                <button type="button" id="reset-btn">Reset</button>
+                <div class="input-group">
+                    <label for="compound-periods">Number of periods</label>
+                    <input type="number" id="compound-periods" placeholder="e.g., 12">
+                </div>
+                <div class="input-group">
+                    <label for="compound-gain">Gain % per period</label>
+                    <input type="number" id="compound-gain" placeholder="e.g., 5">
+                </div>
             </div>
 
-            <div class="affiliate-links">
-                <h3>Recommended Partners</h3>
-                
-                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
-                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
-                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+            <div class="button-group single">
+                <button type="button" id="compound-calc-btn">Calculate</button>
             </div>
-            
-            <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-                <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
+
+            <div class="compound-results-summary hidden" id="compound-summary">
+                <div>
+                    <label>Ending balance</label>
+                    <span id="compound-ending-balance"></span>
+                </div>
+                <div>
+                    <label>Total Gain</label>
+                    <span id="compound-total-gain"></span>
+                </div>
             </div>
-            
-        </form>
-        
-        <div class="results" id="results-display">
-            <h2 id="results-section">Trade Details</h2>
-            <div class="result-item reward">
-                <span>Reward ($):</span>
-                <span id="reward-result"></span>
+
+            <div class="compound-results-table hidden" id="compound-table">
+                <div class="table-row header">
+                    <span>Period</span>
+                    <span>Starting balance</span>
+                    <span>Total Gain</span>
+                    <span>Ending balance</span>
+                </div>
+                <div id="compound-table-body">
+                    </div>
             </div>
-             <div class="result-item">
-                <span>Lot Size:</span>
-                <span id="lot-size-result"></span>
-            </div>
-            <div class="result-item">
-                <span>R:R Ratio:</span>
-                <span id="rr-ratio-result"></span>
-            </div>
-            <div class="result-item">
-                <span>TP Price:</span>
-                <span id="tp-price-result"></span>
-            </div>
+
+        </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
+            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> | 
+            <a href="terms.html" target="_blank" style="color: #999; text-decoration: underline;">Terms & Conditions</a> | 
+            <a href="cookie-policy.html" target="_blank" style="color: #999; text-decoration: underline;">Cookie Policy</a>
         </div>
+        
     </div> 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             
+            // --- POSITION SIZE CALC ELEMENTS ---
             const form = document.getElementById('calculator-form');
             const resetButton = document.getElementById('reset-btn');
             const resultsDiv = document.getElementById('results-display');
@@ -336,6 +472,7 @@
             const desiredProfitInput = document.getElementById('desired-profit');
             const rrRatioResult = document.getElementById('rr-ratio-result');
 
+            // --- POSITION SIZE CALC LOGIC ---
             calcModeRR.addEventListener('change', () => {
                 if (calcModeRR.checked) {
                     rrGroup.classList.remove('hidden');
@@ -450,7 +587,97 @@
             function clearError() {
                 errorMessage.textContent = '';
             }
-        });
+            
+            /* ========================================
+               NEW CODE STARTS HERE
+            ========================================
+            */
+
+            // --- TAB SWITCHING LOGIC ---
+            const tabPosition = document.getElementById('tab-position-calc');
+            const tabCompound = document.getElementById('tab-compound-calc');
+            const wrapperPosition = document.getElementById('position-calc-wrapper');
+            const wrapperCompound = document.getElementById('compound-calc-wrapper');
+
+            tabPosition.addEventListener('click', () => {
+                tabPosition.classList.add('active');
+                tabCompound.classList.remove('active');
+                wrapperPosition.classList.remove('hidden');
+                wrapperCompound.classList.add('hidden');
+            });
+
+            tabCompound.addEventListener('click', () => {
+                tabPosition.classList.remove('active');
+                tabCompound.classList.add('active');
+                wrapperPosition.classList.add('hidden');
+                wrapperCompound.classList.remove('hidden');
+            });
+
+
+            // --- COMPOUNDING CALCULATOR LOGIC ---
+            const compoundCalcBtn = document.getElementById('compound-calc-btn');
+
+            compoundCalcBtn.addEventListener('click', () => {
+                // 1. Get Elements
+                const startBalanceInput = document.getElementById('compound-start-balance');
+                const periodsInput = document.getElementById('compound-periods');
+                const gainInput = document.getElementById('compound-gain');
+                const summaryDiv = document.getElementById('compound-summary');
+                const tableDiv = document.getElementById('compound-table');
+                const tableBody = document.getElementById('compound-table-body');
+                const endingBalanceSpan = document.getElementById('compound-ending-balance');
+                const totalGainSpan = document.getElementById('compound-total-gain');
+
+                // 2. Get and Parse Values
+                const startBalance = parseFloat(startBalanceInput.value);
+                const periods = parseInt(periodsInput.value);
+                const gainPercent = parseFloat(gainInput.value) / 100;
+
+                // 3. Validate
+                if (isNaN(startBalance) || isNaN(periods) || isNaN(gainPercent) || startBalance <= 0 || periods <= 0 || gainPercent <= 0) {
+                    // Using your existing error function
+                    showError("Please enter valid positive numbers in all fields.");
+                    summaryDiv.classList.add('hidden');
+                    tableDiv.classList.add('hidden');
+                    return;
+                }
+                clearError(); // Clear any old errors
+
+                // 4. Calculate
+                let currentBalance = startBalance;
+                let tableHtml = ""; // To build our table rows
+                let cumulativeGain = 0;
+
+                for (let i = 1; i <= periods; i++) {
+                    let periodStartBalance = currentBalance;
+                    let gainAmount = currentBalance * gainPercent;
+                    currentBalance += gainAmount;
+                    cumulativeGain = ((currentBalance / startBalance) - 1) * 100;
+                    
+                    // Add a row to our HTML string
+                    tableHtml += `
+                        <div class="table-row">
+                            <span>${i}</span>
+                            <span>$${periodStartBalance.toFixed(2)}</span>
+                            <span>${cumulativeGain.toFixed(2)}%</span>
+                            <span>$${currentBalance.toFixed(2)}</span>
+                        </div>
+                    `;
+                }
+                
+                // 5. Display Results
+                const totalGain = ((currentBalance / startBalance) - 1) * 100;
+
+                endingBalanceSpan.textContent = `$${currentBalance.toFixed(2)}`;
+                totalGainSpan.textContent = `${totalGain.toFixed(2)}%`;
+                tableBody.innerHTML = tableHtml; // Inject all rows into the table
+
+                // Show the results
+                summaryDiv.classList.remove('hidden');
+                tableDiv.classList.remove('hidden');
+            });
+            
+        }); // <-- This is the CLOSING BRACKET of your DOMContentLoaded
     </script>
     
 <script>
@@ -465,9 +692,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
