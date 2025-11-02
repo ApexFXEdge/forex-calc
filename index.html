@@ -299,15 +299,12 @@
         
         /* --- CALENDAR WIDGET STYLES --- */
         #calendar-calc-wrapper {
-            /* This holds the widget */
             width: 100%;
-            /* REMOVED fixed height and overflow */
         }
         #calendar-calc-wrapper iframe {
-            /* This styles the MyFxBook widget itself */
             width: 100%;
-            height: 550px; /* GAVE the iframe the fixed height */
-            border: none; /* Removes the default iframe border */
+            height: 600px; /* <-- INCREASED HEIGHT */
+            border: none; 
         }
         
     </style>
@@ -417,7 +414,7 @@
                     <input type="number" id="compound-gain" placeholder="e.g., 5">
                 </div>
             </div>
-
+            
             <div id="error-message-compound"></div>
 
             <div class="button-group single">
@@ -450,7 +447,8 @@
             </div>
         </div> <div id="calendar-calc-wrapper" class="hidden">
             
-            <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%; height:500%;"></iframe><div style="margin-top: 10px;">
+            <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%;"></iframe>
+            <div style="margin-top: 10px;">
                     <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
                      <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
                      by Myfxbook.com
@@ -461,14 +459,11 @@
                 <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                 <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
             </div>
-            
-        </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
+            </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
             <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
         </div>
         
-    </div> 
-
-    <script>
+    </div> <script>
         document.addEventListener('DOMContentLoaded', () => {
             
             // --- POSITION SIZE CALC ELEMENTS ---
@@ -688,7 +683,7 @@
                         <div class="table-row">
                             <span>${i}</span>
                             <span>$${periodStartBalance.toFixed(2)}</span>
-                            <span>${cumulativeGain.toFixed(2)}%</span>
+                            <span>${cumulativeGai.toFixed(2)}%</span>
                             <span>$${currentBalance.toFixed(2)}</span>
                         </div>
                     `;
@@ -728,4 +723,3 @@
 
 </body>
 </html>
-
