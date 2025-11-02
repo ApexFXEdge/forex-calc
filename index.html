@@ -84,26 +84,24 @@
             box-sizing: border-box;
         }
 
-        /* --- FIX FOR RADIO BUTTONS --- */
         .radio-group {
             display: flex;
-            flex-direction: column; /* This stacks them vertically */
-            gap: 15px; /* This creates space BETWEEN the two options */
+            flex-direction: column; 
+            gap: 15px; 
         }
         .radio-group label {
             display: flex;
             align-items: center;
             margin: 0;
-            font-size: 1.1em; /* Slightly larger text */
+            font-size: 1.1em; 
             color: var(--text-color);
-            cursor: pointer; /* Makes the whole line clickable */
+            cursor: pointer; 
         }
         .radio-group input[type="radio"] {
             width: auto;
-            margin-right: 10px; /* Space between button and text */
-            transform: scale(1.5); /* Made buttons 50% bigger */
+            margin-right: 10px; 
+            transform: scale(1.5); 
         }
-        /* --- END OF RADIO BUTTON FIX --- */
         
         input:focus, select:focus {
             outline: none;
@@ -420,7 +418,13 @@
             <div class="button-group single">
                 <button type="button" id="compound-calc-btn">Calculate</button>
             </div>
-
+            
+            <div class="affiliate-links">
+                <h3>Recommended Partners</h3>
+                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+            </div>
             <div class="compound-results-summary hidden" id="compound-summary">
                 <div>
                     <label>Ending balance</label>
@@ -444,7 +448,7 @@
             </div>
 
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
+            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
         </div>
         
     </div> 
@@ -690,4 +694,3 @@
 
 </body>
 </html>
-
