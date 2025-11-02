@@ -210,7 +210,7 @@
              color: var(--success-color);
         }
 
-        #error-message {
+        #error-message, #error-message-compound { /* Combined error styles */
             color: #dc3545;
             text-align: center;
             margin-top: 15px;
@@ -297,17 +297,16 @@
             color: var(--label-color);
         }
         
-        /* --- NEW CALENDAR WIDGET STYLES --- */
+        /* --- CALENDAR WIDGET STYLES --- */
         #calendar-calc-wrapper {
             /* This holds the widget */
             width: 100%;
-            height: 550px; /* Set a fixed height for the widget area */
-            overflow: hidden; /* Hides any scrollbars on the container */
+            /* REMOVED fixed height and overflow */
         }
         #calendar-calc-wrapper iframe {
             /* This styles the MyFxBook widget itself */
             width: 100%;
-            height: 100%;
+            height: 550px; /* GAVE the iframe the fixed height */
             border: none; /* Removes the default iframe border */
         }
         
@@ -418,6 +417,9 @@
                     <input type="number" id="compound-gain" placeholder="e.g., 5">
                 </div>
             </div>
+
+            <div id="error-message-compound"></div>
+
             <div class="button-group single">
                 <button type="button" id="compound-calc-btn">Calculate</button>
             </div>
@@ -447,15 +449,12 @@
                 <div id="compound-table-body"></div>
             </div>
         </div> <div id="calendar-calc-wrapper" class="hidden">
-
-            <!-- myfxbook.com Economic Calendar Widget - Start -->
-<iframe src=https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD style="border: 0; width:100%; height:100%;"></iframe><div style="margin-top: 10px;">
-            <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
-             <a href=https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
-             by Myfxbook.com
-            </div></div>
-<!-- myfxbook.com Economic Calendar Widget - End -->
-
+            
+            <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%; height:100%;"></iframe><div style="margin-top: 10px;">
+                    <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
+                     <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
+                     by Myfxbook.com
+                    </div></div>
             <div class="affiliate-links">
                 <h3>Recommended Partners</h3>
                 <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
@@ -463,8 +462,8 @@
                 <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
             </div>
             
-            </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
+        </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
+            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
         </div>
         
     </div> 
@@ -614,40 +613,34 @@
             // --- TAB SWITCHING LOGIC ---
             const tabPosition = document.getElementById('tab-position-calc');
             const tabCompound = document.getElementById('tab-compound-calc');
-            const tabCalendar = document.getElementById('tab-calendar-calc'); // New Calendar Tab
+            const tabCalendar = document.getElementById('tab-calendar-calc'); 
             
             const wrapperPosition = document.getElementById('position-calc-wrapper');
             const wrapperCompound = document.getElementById('compound-calc-wrapper');
-            const wrapperCalendar = document.getElementById('calendar-calc-wrapper'); // New Calendar Wrapper
+            const wrapperCalendar = document.getElementById('calendar-calc-wrapper'); 
 
             tabPosition.addEventListener('click', () => {
-                // Set active tab
                 tabPosition.classList.add('active');
                 tabCompound.classList.remove('active');
                 tabCalendar.classList.remove('active');
-                // Show active wrapper
                 wrapperPosition.classList.remove('hidden');
                 wrapperCompound.classList.add('hidden');
                 wrapperCalendar.classList.add('hidden');
             });
 
             tabCompound.addEventListener('click', () => {
-                // Set active tab
                 tabPosition.classList.remove('active');
                 tabCompound.classList.add('active');
                 tabCalendar.classList.remove('active');
-                // Show active wrapper
                 wrapperPosition.classList.add('hidden');
                 wrapperCompound.classList.remove('hidden');
                 wrapperCalendar.classList.add('hidden');
             });
             
             tabCalendar.addEventListener('click', () => {
-                // Set active tab
                 tabPosition.classList.remove('active');
                 tabCompound.classList.remove('active');
                 tabCalendar.classList.add('active');
-                // Show active wrapper
                 wrapperPosition.classList.add('hidden');
                 wrapperCompound.classList.add('hidden');
                 wrapperCalendar.classList.remove('hidden');
@@ -656,13 +649,14 @@
 
             // --- COMPOUNDING CALCULATOR LOGIC ---
             const compoundCalcBtn = document.getElementById('compound-calc-btn');
+            const compoundError = document.getElementById('error-message-compound'); // Get new error div
+            const startBalanceInput = document.getElementById('compound-start-balance');
+            const periodsInput = document.getElementById('compound-periods');
+            const gainInput = document.getElementById('compound-gain');
+            const summaryDiv = document.getElementById('compound-summary');
+            const tableDiv = document.getElementById('compound-table');
 
             compoundCalcBtn.addEventListener('click', () => {
-                const startBalanceInput = document.getElementById('compound-start-balance');
-                const periodsInput = document.getElementById('compound-periods');
-                const gainInput = document.getElementById('compound-gain');
-                const summaryDiv = document.getElementById('compound-summary');
-                const tableDiv = document.getElementById('compound-table');
                 const tableBody = document.getElementById('compound-table-body');
                 const endingBalanceSpan = document.getElementById('compound-ending-balance');
                 const totalGainSpan = document.getElementById('compound-total-gain');
@@ -672,17 +666,13 @@
                 const gainPercent = parseFloat(gainInput.value) / 100;
 
                 if (isNaN(startBalance) || isNaN(periods) || isNaN(gainPercent) || startBalance <= 0 || periods <= 0 || gainPercent <= 0) {
-                    // We need to find the error message for *this* tab
-                    const compoundError = wrapperCompound.querySelector('#error-message') || errorMessage; // Fallback
-                    if(compoundError) compoundError.textContent = "Please enter valid positive numbers in all fields.";
+                    compoundError.textContent = "Please enter valid positive numbers in all fields.";
                     summaryDiv.classList.add('hidden');
                     tableDiv.classList.add('hidden');
                     return;
                 }
                 
-                // Clear any old errors
-                const compoundError = wrapperCompound.querySelector('#error-message');
-                if (compoundError) compoundError.textContent = '';
+                compoundError.textContent = ''; // Clear error
                 
                 let currentBalance = startBalance;
                 let tableHtml = ""; 
@@ -713,6 +703,15 @@
                 summaryDiv.classList.remove('hidden');
                 tableDiv.classList.remove('hidden');
             });
+
+            // Clear compound error on input
+            [startBalanceInput, periodsInput, gainInput].forEach(input => {
+                input.addEventListener('input', () => {
+                    if (compoundError.textContent) {
+                        compoundError.textContent = '';
+                    }
+                });
+            });
             
         }); 
     </script>
@@ -729,8 +728,3 @@
 
 </body>
 </html>
-
-
-
-
-
