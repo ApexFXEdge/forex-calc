@@ -315,8 +315,8 @@
         <h1>Apex FX Trader's Edge</h1>
         
         <nav class="calc-nav">
-            <button id="tab-position-calc" class="calc-tab active">Calc</button>
-            <button id="tab-compound-calc" class="calc-tab">Compound</button>
+            <button id="tab-position-calc" class="calc-tab active">Position Size</button>
+            <button id="tab-compound-calc" class="calc-tab">Compounding</button>
             <button id="tab-calendar-calc" class="calc-tab">Calendar</button>
         </nav>
 
@@ -347,7 +347,10 @@
                             <input type="radio" id="calc-mode-profit" name="calc-mode" value="profit"> Profit Target ($)
                         </label>
                         <label>
-                            <input type="radio" id="calc-mode-tp" name="calc-mode" value="tp"> TP Price
+                            <input type="radio" id="calc-mode-tp" name="calc-mode" value="tp"> Calc Profit from TP
+                        </label>
+                        <label>
+                            <input type="radio" id="calc-mode-find-tp" name="calc-mode" value="find-tp"> Find TP from Profit
                         </label>
                     </div>
                 </div>
@@ -377,15 +380,13 @@
                     <input type="number" id="desired-profit" step="any" placeholder="e.g., 200">
                 </div>
                 
-                <div class="hidden" id="tp-calc-group">
-                    <div class="input-group">
-                        <label for="lot-size-input">Lot Size</label>
-                        <input type="number" id="lot-size-input" step="any" placeholder="e.g., 1.5">
-                    </div>
-                    <div class="input-group">
-                        <label for="tp-price-input">TP Price</label>
-                        <input type="number" id="tp-price-input" step="any" placeholder="e.g., 0.66000">
-                    </div>
+                <div class="input-group hidden" id="lot-size-input-group">
+                    <label for="lot-size-input">Lot Size</label>
+                    <input type="number" id="lot-size-input" step="any" placeholder="e.g., 1.5">
+                </div>
+                <div class="input-group hidden" id="tp-price-input-group">
+                    <label for="tp-price-input">TP Price</label>
+                    <input type="number" id="tp-price-input" step="any" placeholder="e.g., 0.66000">
                 </div>
 
                 <div id="error-message"></div>
@@ -483,13 +484,13 @@
             </div>
             
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
+            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
         </div>
         
     </div> <script>
         document.addEventListener('DOMContentLoaded', () => {
             
-            // --- POSITION SIZE CALC ELEMENTS ---
+            // --- ALL POSITION SIZE CALC ELEMENTS ---
             const form = document.getElementById('calculator-form');
             const resetButton = document.getElementById('reset-btn');
             const resultsDiv = document.getElementById('results-display');
@@ -500,40 +501,33 @@
             const tpPriceResult = document.getElementById('tp-price-result');
             const rrRatioResult = document.getElementById('rr-ratio-result');
             
-            // --- NEW: Result Item Wrappers (for hiding/showing) ---
             const rewardResultItem = document.getElementById('reward-result-item');
             const lotSizeResultItem = document.getElementById('lot-size-result-item');
             const rrRatioResultItem = document.getElementById('rr-ratio-result-item');
             const tpPriceResultItem = document.getElementById('tp-price-result-item');
 
-            // --- Radio Buttons ---
             const calcModeRR = document.getElementById('calc-mode-rr');
             const calcModeProfit = document.getElementById('calc-mode-profit');
-            const calcModeTP = document.getElementById('calc-mode-tp'); // NEW
+            const calcModeTP = document.getElementById('calc-mode-tp');
+            const calcModeFindTP = document.getElementById('calc-mode-find-tp'); // NEW
             
-            // --- Input Field Groups ---
-            const entryPriceGroup = document.getElementById('entry-price-group'); // NEW
-            const slPriceGroup = document.getElementById('sl-price-group'); // NEW
-            const riskAmountGroup = document.getElementById('risk-amount-group'); // NEW
+            const entryPriceGroup = document.getElementById('entry-price-group');
+            const slPriceGroup = document.getElementById('sl-price-group');
+            const riskAmountGroup = document.getElementById('risk-amount-group');
             const rrGroup = document.getElementById('rr-group');
             const profitGroup = document.getElementById('profit-group');
-            const tpCalcGroup = document.getElementById('tp-calc-group'); // NEW
-
-            // --- New Input Fields ---
-            const lotSizeInput = document.getElementById('lot-size-input');
-            const tpPriceInput = document.getElementById('tp-price-input');
+            const lotSizeInputGroup = document.getElementById('lot-size-input-group'); // NEW
+            const tpPriceInputGroup = document.getElementById('tp-price-input-group'); // NEW
             
-            // --- Input Fields (for required logic) ---
             const entryPriceInput = document.getElementById('entry-price');
             const slPriceInput = document.getElementById('sl-price');
             const riskAmountInput = document.getElementById('risk-amount');
             const rrRatioInput = document.getElementById('rr-ratio');
             const desiredProfitInput = document.getElementById('desired-profit');
+            const lotSizeInput = document.getElementById('lot-size-input'); // NEW
+            const tpPriceInput = document.getElementById('tp-price-input'); // NEW
             
-
-            // --- POSITION SIZE CALC LOGIC ---
-            
-            // --- NEW: Function to manage field visibility ---
+            // --- NEW: Function to manage all field visibility ---
             function updateVisibleFields() {
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
                 
@@ -542,9 +536,10 @@
                 riskAmountGroup.classList.add('hidden');
                 rrGroup.classList.add('hidden');
                 profitGroup.classList.add('hidden');
-                tpCalcGroup.classList.add('hidden');
+                lotSizeInputGroup.classList.add('hidden');
+                tpPriceInputGroup.classList.add('hidden');
 
-                // Remove 'required' from all fields
+                // Remove 'required' from all optional fields
                 slPriceInput.removeAttribute('required');
                 riskAmountInput.removeAttribute('required');
                 rrRatioInput.removeAttribute('required');
@@ -553,29 +548,29 @@
                 tpPriceInput.removeAttribute('required');
 
                 if (calcMode === 'rr') {
-                    // Show SL, Risk, and R:R
                     slPriceGroup.classList.remove('hidden');
                     riskAmountGroup.classList.remove('hidden');
                     rrGroup.classList.remove('hidden');
-                    // Set required fields
                     slPriceInput.setAttribute('required', 'required');
                     riskAmountInput.setAttribute('required', 'required');
                     rrRatioInput.setAttribute('required', 'required');
                 } else if (calcMode === 'profit') {
-                    // Show SL, Risk, and Profit Target
                     slPriceGroup.classList.remove('hidden');
                     riskAmountGroup.classList.remove('hidden');
                     profitGroup.classList.remove('hidden');
-                    // Set required fields
                     slPriceInput.setAttribute('required', 'required');
                     riskAmountInput.setAttribute('required', 'required');
                     desiredProfitInput.setAttribute('required', 'required');
                 } else if (calcMode === 'tp') {
-                    // Show Lot Size and TP Price
-                    tpCalcGroup.classList.remove('hidden');
-                    // Set required fields
+                    lotSizeInputGroup.classList.remove('hidden');
+                    tpPriceInputGroup.classList.remove('hidden');
                     lotSizeInput.setAttribute('required', 'required');
                     tpPriceInput.setAttribute('required', 'required');
+                } else if (calcMode === 'find-tp') {
+                    lotSizeInputGroup.classList.remove('hidden');
+                    profitGroup.classList.remove('hidden');
+                    lotSizeInput.setAttribute('required', 'required');
+                    desiredProfitInput.setAttribute('required', 'required');
                 }
             }
             
@@ -583,6 +578,7 @@
             calcModeRR.addEventListener('change', updateVisibleFields);
             calcModeProfit.addEventListener('change', updateVisibleFields);
             calcModeTP.addEventListener('change', updateVisibleFields);
+            calcModeFindTP.addEventListener('change', updateVisibleFields);
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault(); 
@@ -594,18 +590,18 @@
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
                 
                 let pointValue;
-                if (pairType === 'digits5') { pointValue = 0.0001; }
-                else if (pairType === 'digits3') { pointValue = 0.01; }
-                else { pointValue = 1; }
+                let decimalPlaces;
+
+                if (pairType === 'digits5') { pointValue = 0.0001; decimalPlaces = 5; }
+                else if (pairType === 'digits3') { pointValue = 0.01; decimalPlaces = 3; }
+                else { pointValue = 1; decimalPlaces = 2; }
 
                 // --- Run calculations based on selected mode ---
 
                 if (calcMode === 'rr' || calcMode === 'profit') {
-                    // --- Original Logic (Risk & SL based) ---
                     const slPrice = parseFloat(slPriceInput.value);
                     const riskAmount = parseFloat(riskAmountInput.value);
 
-                    // Validation
                     if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount)) {
                         showError("Please fill in all number fields."); return;
                     }
@@ -634,12 +630,14 @@
                         rrRatio = rewardAmount / riskAmount; 
                     }
 
-                    let decimalPlaces, lotSize;
+                    let lotSize;
                     const stopDistancePrice = Math.abs(entryPrice - slPrice);
 
-                    if (pairType === 'digits5') { decimalPlaces = 5; lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10); }
-                    else if (pairType === 'digits3') { decimalPlaces = 3; lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10); }
-                    else { decimalPlaces = 2; lotSize = riskAmount / stopDistancePrice; }
+                    if (pairType === 'digits5' || pairType === 'digits3') { 
+                        lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                    } else { 
+                        lotSize = riskAmount / stopDistancePrice;
+                    }
 
                     const tpDistancePrice = stopDistancePrice * rrRatio;
                     const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
@@ -657,11 +655,9 @@
                     tpPriceResultItem.classList.remove('hidden');
 
                 } else if (calcMode === 'tp') {
-                    // --- NEW Logic (TP Price & Lot Size based) ---
                     const lotSize = parseFloat(lotSizeInput.value);
                     const tpPrice = parseFloat(tpPriceInput.value);
 
-                    // Validation
                     if (isNaN(entryPrice) || isNaN(lotSize) || isNaN(tpPrice)) {
                         showError("Please fill in all number fields."); return;
                     }
@@ -684,7 +680,6 @@
                         rewardAmount = profitDistancePrice * lotSize;
                     }
 
-                    // Display results
                     rewardResult.textContent = '$' + rewardAmount.toFixed(2);
                     
                     // Show ONLY the reward, hide others
@@ -692,6 +687,39 @@
                     lotSizeResultItem.classList.add('hidden');
                     rrRatioResultItem.classList.add('hidden');
                     tpPriceResultItem.classList.add('hidden');
+                
+                } else if (calcMode === 'find-tp') {
+                    const lotSize = parseFloat(lotSizeInput.value);
+                    const rewardAmount = parseFloat(desiredProfitInput.value);
+
+                    if (isNaN(entryPrice) || isNaN(lotSize) || isNaN(rewardAmount)) {
+                        showError("Please fill in all number fields."); return;
+                    }
+                    if (lotSize <= 0) {
+                        showError("Lot Size must be greater than 0."); return;
+                    }
+                    if (rewardAmount <= 0) {
+                        showError("Profit Target must be greater than 0."); return;
+                    }
+
+                    let tpDistancePrice;
+
+                    if (pairType === 'digits5' || pairType === 'digits3') {
+                        tpDistancePrice = (rewardAmount * pointValue) / (lotSize * 10);
+                    } else { // digits1
+                        tpDistancePrice = rewardAmount / lotSize;
+                    }
+                    
+                    const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
+
+                    // Display results
+                    tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
+                    
+                    // Show ONLY the TP Price, hide others
+                    rewardResultItem.classList.add('hidden');
+                    lotSizeResultItem.classList.add('hidden');
+                    rrRatioResultItem.classList.add('hidden');
+                    tpPriceResultItem.classList.remove('hidden');
                 }
 
                 resultsDiv.style.display = 'block'; 
@@ -833,7 +861,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/traders-edge/sw.js') // <-- FIXED PATH
+      navigator.serviceWorker.register('/traders-edge/sw.js')
         .then(reg => console.log('Service worker registered.'))
         .catch(err => console.log('Service worker registration failed: ', err));
     });
