@@ -236,7 +236,7 @@
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.2s ease;
-            line-height: 1.35; /* <-- ADDED FOR 2-LINE TABS */
+            line-height: 1.35; 
         }
         .calc-tab.active {
             background-color: var(--primary-color);
@@ -481,6 +481,7 @@
             
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
             <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
+        </div>
         
     </div> <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -523,6 +524,11 @@
             // --- Function to manage all field visibility ---
             function updateVisibleFields() {
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
+
+                // === FIX: HIDE RESULTS AND CLEAR ERRORS ON SWITCH ===
+                resultsDiv.style.display = 'none';
+                clearError();
+                // === END FIX ===
                 
                 // Hide all optional groups first
                 slPriceGroup.classList.add('hidden');
