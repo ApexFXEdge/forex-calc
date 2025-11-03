@@ -503,7 +503,7 @@
             const tpPriceResultItem = document.getElementById('tp-price-result-item');
 
             const calcModeRR = document.getElementById('calc-mode-rr');
-            const calcModeLotSize = document.getElementById('calc-mode-lot-size'); // RENAMED
+            const calcModeLotSize = document.getElementById('calc-mode-lot-size'); 
             
             const entryPriceGroup = document.getElementById('entry-price-group');
             const slPriceGroup = document.getElementById('sl-price-group');
@@ -553,7 +553,7 @@
                     slPriceInput.setAttribute('required', 'required');
                     riskAmountInput.setAttribute('required', 'required');
                     rrRatioInput.setAttribute('required', 'required');
-                } else if (calcMode === 'lot-size') { // RENAMED
+                } else if (calcMode === 'lot-size') { 
                     lotSizeInputGroup.classList.remove('hidden');
                     profitGroup.classList.remove('hidden');
                     lotSizeInput.setAttribute('required', 'required');
@@ -563,7 +563,7 @@
             
             // Add event listeners to all radio buttons
             calcModeRR.addEventListener('change', updateVisibleFields);
-            calcModeLotSize.addEventListener('change', updateVisibleFields); // RENAMED
+            calcModeLotSize.addEventListener('change', updateVisibleFields); 
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault(); 
@@ -583,7 +583,7 @@
 
                 // --- Run calculations based on selected mode ---
 
-                if (calcMode === 'rr') { // UPDATED
+                if (calcMode === 'rr') { 
                     const slPrice = parseFloat(slPriceInput.value);
                     const riskAmount = parseFloat(riskAmountInput.value);
 
@@ -631,7 +631,7 @@
                     rrRatioResultItem.classList.remove('hidden');
                     tpPriceResultItem.classList.remove('hidden');
 
-                } else if (calcMode === 'lot-size') { // RENAMED
+                } else if (calcMode === 'lot-size') { 
                     const lotSize = parseFloat(lotSizeInput.value);
                     const rewardAmount = parseFloat(desiredProfitInput.value);
 
@@ -657,6 +657,11 @@
 
                     // Display results
                     tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
+                    
+                    // === FIX: Clear old results ===
+                    rewardResult.textContent = '';
+                    lotSizeResult.textContent = '';
+                    rrRatioResult.textContent = '';
                     
                     // Show ONLY the TP Price, hide others
                     rewardResultItem.classList.add('hidden');
