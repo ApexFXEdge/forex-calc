@@ -236,7 +236,7 @@
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.2s ease;
-            line-height: 1.35; 
+            line-height: 1.35; /* <-- ADDED FOR 2-LINE TABS */
         }
         .calc-tab.active {
             background-color: var(--primary-color);
@@ -325,14 +325,12 @@
             <form id="calculator-form">
                 <div class="input-group">
                     <label for="pair-type">Pair Type</label>
-<select id="pair-type">
-    <option value="digits5">5 Digit Pairs (e.g., AUD, EUR)</option>
-    <option value="digits3">3 Digit Pairs (e.g., JPY)</option>
-     <option value="digits1">1 Digit Pairs (e.g., BTC, US30)</option>
-    <option value="gold">Gold (XAUUSD)</option>
-   
-</select>
-                    
+                    <select id="pair-type">
+                        <option value="digits5">5 Digit Pairs (e.g., AUD, EUR)</option>
+                        <option value="digits3">3 Digit Pairs (e.g., JPY)</option>
+                        <option value="digits1">1 Digit Pairs (e.g., BTC, US30)</option>
+                        <option value="gold">Gold (XAUUSD)</option>
+                    </select>
                 </div>
                 <div class="input-group">
                     <label for="trade-direction">Buy/Sell</label>
@@ -395,7 +393,7 @@
                 </div>
                 <div class="affiliate-links">
                     <h3>Recommended Partners</h3>
-                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                    <a href="https.www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
                     <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                     <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
                 </div>
@@ -443,7 +441,7 @@
             </div>
             <div class="affiliate-links">
                 <h3>Recommended Partners</h3>
-                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https.www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
                 <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                 <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
             </div>
@@ -477,13 +475,15 @@
 
             <div class="affiliate-links">
                 <h3>Recommended Partners</h3>
-                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https.www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
                 <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                 <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
             </div>
             
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
+            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> | 
+            <a href="terms.html" target="_blank" style="color: #999; text-decoration: underline;">Terms & Conditions</a> | 
+            <a href="cookie-policy.html" target="_blank" style="color: #999; text-decoration: underline;">Cookie Policy</a>
         </div>
         
     </div> <script>
@@ -528,10 +528,8 @@
             function updateVisibleFields() {
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
 
-                // === FIX: HIDE RESULTS AND CLEAR ERRORS ON SWITCH ===
                 resultsDiv.style.display = 'none';
                 clearError();
-                // === END FIX ===
                 
                 // Hide all optional groups first
                 slPriceGroup.classList.add('hidden');
@@ -579,32 +577,35 @@
                 
                 let pointValue;
                 let decimalPlaces;
+                let lotSize; // Moved lotSize up
 
-               if (pairType === 'digits5') { 
-    pointValue = 0.0001;
-    decimalPlaces = 5;
-    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
-} else if (pairType === 'digits3') { 
-    pointValue = 0.01;
-    decimalPlaces = 3; // For JPY pairs
-    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
-} else if (pairType === 'gold') { // NEW BLOCK FOR GOLD
-    pointValue = 0.01;
-    decimalPlaces = 2; // Gold is 2 decimals
-    // 1 lot = $1 per 0.01 pip. Formula is risk / (pips * $1)
-    lotSize = riskAmount / (stopDistancePrice / 0.01);
-} else { // 'digits1' for BTC, US30
-    pointValue = 1; 
-    decimalPlaces = 2;
-    lotSize = riskAmount / stopDistancePrice; // Correct for 1-to-1 assets
-}
+                // --- FIX: Correct Gold Calculation Logic ---
+                const slPrice = parseFloat(slPriceInput.value);
+                const riskAmount = parseFloat(riskAmountInput.value);
+                const stopDistancePrice = Math.abs(entryPrice - slPrice);
+
+                if (pairType === 'digits5') { 
+                    pointValue = 0.0001;
+                    decimalPlaces = 5;
+                    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                } else if (pairType === 'digits3') { 
+                    pointValue = 0.01;
+                    decimalPlaces = 3; // For JPY pairs
+                    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                } else if (pairType === 'gold') { 
+                    pointValue = 0.01;
+                    decimalPlaces = 2; // Gold is 2 decimals
+                    lotSize = riskAmount / (stopDistancePrice / 0.01);
+                } else { // 'digits1' for BTC, US30
+                    pointValue = 1; 
+                    decimalPlaces = 2;
+                    lotSize = riskAmount / stopDistancePrice; 
+                }
+                // --- END FIX ---
 
                 // --- Run calculations based on selected mode ---
 
                 if (calcMode === 'rr') { 
-                    const slPrice = parseFloat(slPriceInput.value);
-                    const riskAmount = parseFloat(riskAmountInput.value);
-
                     if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount)) {
                         showError("Please fill in all number fields."); return;
                     }
@@ -625,15 +626,6 @@
                     }
                     rewardAmount = riskAmount * rrRatio;
 
-                    let lotSize;
-                    const stopDistancePrice = Math.abs(entryPrice - slPrice);
-
-                    if (pairType === 'digits5' || pairType === 'digits3') { 
-                        lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
-                    } else { 
-                        lotSize = riskAmount / stopDistancePrice;
-                    }
-
                     const tpDistancePrice = stopDistancePrice * rrRatio;
                     const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
 
@@ -650,13 +642,13 @@
                     tpPriceResultItem.classList.remove('hidden');
 
                 } else if (calcMode === 'lot-size') { 
-                    const lotSize = parseFloat(lotSizeInput.value);
+                    const lotSizeInputVal = parseFloat(lotSizeInput.value); // Renamed to avoid conflict
                     const rewardAmount = parseFloat(desiredProfitInput.value);
 
-                    if (isNaN(entryPrice) || isNaN(lotSize) || isNaN(rewardAmount)) {
+                    if (isNaN(entryPrice) || isNaN(lotSizeInputVal) || isNaN(rewardAmount)) {
                         showError("Please fill in all number fields."); return;
                     }
-                    if (lotSize <= 0) {
+                    if (lotSizeInputVal <= 0) {
                         showError("Lot Size must be greater than 0."); return;
                     }
                     if (rewardAmount <= 0) {
@@ -666,9 +658,11 @@
                     let tpDistancePrice;
 
                     if (pairType === 'digits5' || pairType === 'digits3') {
-                        tpDistancePrice = (rewardAmount * pointValue) / (lotSize * 10);
+                        tpDistancePrice = (rewardAmount * pointValue) / (lotSizeInputVal * 10);
+                    } else if (pairType === 'gold') {
+                        tpDistancePrice = (rewardAmount * pointValue) / lotSizeInputVal;
                     } else { // digits1
-                        tpDistancePrice = rewardAmount / lotSize;
+                        tpDistancePrice = rewardAmount / lotSizeInputVal;
                     }
                     
                     const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
@@ -676,7 +670,7 @@
                     // Display results
                     tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
                     
-                    // === FIX: Clear old results ===
+                    // --- FIX: Clear old results ---
                     rewardResult.textContent = '';
                     lotSizeResult.textContent = '';
                     rrRatioResult.textContent = '';
@@ -836,9 +830,3 @@
 
 </body>
 </html>
-
-
-
-
-
-
