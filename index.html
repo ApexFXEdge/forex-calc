@@ -62,12 +62,6 @@
             color: var(--aqua-blue);
         }
 
-        /* --- FIX: Remove default top margin from form --- */
-        #calculator-form {
-            margin-top: 0;
-      
-        }
-
         .input-group {
             margin-bottom: 20px;
         }
@@ -88,6 +82,25 @@
             color: var(--text-color);
             font-size: 1em;
             box-sizing: border-box;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column; 
+            gap: 15px; 
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            font-size: 1.1em; 
+            color: var(--text-color);
+            cursor: pointer; 
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            margin-right: 10px; 
+            transform: scale(1.5); 
         }
         
         input:focus, select:focus {
@@ -427,67 +440,69 @@
                 </div>
             </div>
         </div> <div id="compound-calc-wrapper" class="hidden">
-            <div class="input-group">
-                <label for="compound-start-balance">Starting balance</label>
-                <input type="number" id="compound-start-balance" placeholder="e.g., 20000">
-            </div>
-            <div class="button-group">
+            <form id="compound-form">
                 <div class="input-group">
-                    <label for="compound-periods">Number of periods</label>
-                    <input type="number" id="compound-periods" placeholder="e.g., 12">
+                    <label for="compound-start-balance">Starting balance</label>
+                    <input type="number" id="compound-start-balance" placeholder="e.g., 20000">
                 </div>
-                <div class="input-group">
-                    <label for="compound-gain">Gain % per period</label>
-                    <input type="number" id="compound-gain" placeholder="e.g., 5">
+                <div class="button-group">
+                    <div class="input-group">
+                        <label for="compound-periods">Number of periods</label>
+                        <input type="number" id="compound-periods" placeholder="e.g., 12">
+                    </div>
+                    <div class="input-group">
+                        <label for="compound-gain">Gain % per period</label>
+                        <input type="number" id="compound-gain" placeholder="e.g., 5">
+                    </div>
                 </div>
-            </div>
-            
-            <div id="error-message-compound"></div>
+                
+                <div id="error-message-compound"></div>
 
-            <div class="button-group single">
-                <button type="button" id="compound-calc-btn">Calculate</button>
-            </div>
-            <div class="affiliate-links">
-                <h3>Recommended Partners</h3>
-                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
-                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
-                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
-            </div>
-            <div class="compound-results-summary hidden" id="compound-summary">
-                <div>
-                    <label>Ending balance</label>
-                    <span id="compound-ending-balance"></span>
+                <div class="button-group single">
+                    <button type="button" id="compound-calc-btn">Calculate</button>
                 </div>
-                <div>
-                    <label>Total Gain</label>
-                    <span id="compound-total-gain"></span>
+                <div class="affiliate-links">
+                    <h3>Recommended Partners</h3>
+                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                    <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                    <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
                 </div>
-            </div>
-            <div class="compound-results-table hidden" id="compound-table">
-                <div class="table-row header">
-                    <span>Period</span>
-                    <span>Starting balance</span>
-                    <span>Total Gain</span>
-                    <span>Ending balance</span>
+                <div class="compound-results-summary hidden" id="compound-summary">
+                    <div>
+                        <label>Ending balance</label>
+                        <span id="compound-ending-balance"></span>
+                    </div>
+                    <div>
+                        <label>Total Gain</label>
+                        <span id="compound-total-gain"></span>
+                    </div>
                 </div>
-                <div id="compound-table-body"></div>
-            </div>
+                <div class="compound-results-table hidden" id="compound-table">
+                    <div class="table-row header">
+                        <span>Period</span>
+                        <span>Starting balance</span>
+                        <span>Total Gain</span>
+                        <span>Ending balance</span>
+                    </div>
+                    <div id="compound-table-body"></div>
+                </div>
+            </form>
         </div> <div id="calendar-calc-wrapper" class="hidden">
-            
-            <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%; height: 600px;"></iframe>
-            <div style="margin-top: 10px;">
-                    <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
-                     <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
-                     by Myfxbook.com
-                    </div></div>
+            <form id="calendar-form">
+                <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%; height: 600px;"></iframe>
+                <div style="margin-top: 10px;">
+                        <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
+                         <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
+                         by Myfxbook.com
+                        </div></div>
 
-            <div class="affiliate-links">
-                <h3>Recommended Partners</h3>
-                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
-                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
-                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
-            </div>
-            
+                <div class="affiliate-links">
+                    <h3>Recommended Partners</h3>
+                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                    <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                    <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+                </div>
+            </form>
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
             <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
         </div>
@@ -536,14 +551,12 @@
                 resultsDiv.style.display = 'none';
                 clearError();
                 
-                // Hide all optional groups first
                 slPriceGroup.classList.add('hidden');
                 riskAmountGroup.classList.add('hidden');
                 rrGroup.classList.add('hidden');
                 profitGroup.classList.add('hidden');
                 lotSizeInputGroup.classList.add('hidden');
 
-                // Remove 'required' from all optional fields
                 slPriceInput.removeAttribute('required');
                 riskAmountInput.removeAttribute('required');
                 rrRatioInput.removeAttribute('required');
@@ -565,7 +578,6 @@
                 }
             }
             
-            // Add event listeners
             calcModeSelect.addEventListener('change', updateVisibleFields);
             
             // --- API KEY AND FETCH FUNCTION ---
@@ -575,12 +587,10 @@
                 const cache = JSON.parse(localStorage.getItem('quoteRateCache'));
                 const now = new Date().getTime();
 
-                // If cache exists and is less than 1 hour old, use it
                 if (cache && cache.base_code === 'USD' && (now - cache.timestamp) < 3600000) {
-                    return cache.rates; // Return the stored rates object
+                    return cache.rates;
                 }
 
-                // Otherwise, fetch new ones
                 try {
                     errorMessage.textContent = `Getting live exchange rates...`;
                     const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
@@ -602,13 +612,11 @@
                     }
                 } catch (error) {
                     console.error('Failed to fetch exchange rate:', error);
-                    showError(`Could not fetch exchange rates.`);
-                    // Fallback to a static object if API fails
+                    showError(`Could not fetch exchange rates. Using estimates.`);
                     return { "USD": 1.0, "JPY": 150.0, "CAD": 1.35, "CHF": 0.90, "AUD": 0.66, "EUR": 1.08, "GBP": 1.25, "NZD": 0.61 };
                 }
             }
             
-            // --- UPDATED: Make the form submission async ---
             form.addEventListener('submit', async (e) => {
                 e.preventDefault(); 
                 clearError();
@@ -624,7 +632,6 @@
                 const entryPrice = parseFloat(entryPriceInput.value);
                 const calcMode = calcModeSelect.value;
                 
-                // --- NEW: Get Rates and Calculate Pip Value ---
                 const rates = await getRatesFromApi();
                 if (!rates) {
                     showError("Calculation failed. Could not get exchange rates.");
@@ -640,15 +647,12 @@
                      return;
                 }
                 
-                // This is the single, universal formula for pip value in USD
-                pipValuePerLot = (pipValueInQuoteCurrency / usdToQuoteRate);
+                pipValuePerLot = pipValueInQuoteCurrency / usdToQuoteRate;
 
-                // --- Special override for indices and gold ---
+                // Special override for indices and gold
                 if (pairType === 'indices' || pairType === 'gold') {
                     pipValuePerLot = contractSize * pointValue;
                 }
-                // --- END NEW LOGIC ---
-
 
                 // --- Run calculations based on selected mode ---
 
@@ -875,4 +879,3 @@
 
 </body>
 </html>
-
