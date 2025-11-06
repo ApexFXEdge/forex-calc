@@ -61,6 +61,12 @@
             font-size: 1.3em;
             color: var(--aqua-blue);
         }
+        
+        /* --- THIS IS THE FIX --- */
+        #calculator-form {
+            margin-block-start: 0; /* Removes default top margin */
+        }
+        /* --- END OF FIX --- */
 
         .input-group {
             margin-bottom: 20px;
@@ -82,25 +88,6 @@
             color: var(--text-color);
             font-size: 1em;
             box-sizing: border-box;
-        }
-
-        .radio-group {
-            display: flex;
-            flex-direction: column; 
-            gap: 15px; 
-        }
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            margin: 0;
-            font-size: 1.1em; 
-            color: var(--text-color);
-            cursor: pointer; 
-        }
-        .radio-group input[type="radio"] {
-            width: auto;
-            margin-right: 10px; 
-            transform: scale(1.5); 
         }
         
         input:focus, select:focus {
@@ -612,8 +599,8 @@
                     }
                 } catch (error) {
                     console.error('Failed to fetch exchange rate:', error);
-                    showError(`Could not fetch exchange rates. Using estimates.`);
-                    return { "USD": 1.0, "JPY": 150.0, "CAD": 1.35, "CHF": 0.90, "AUD": 0.66, "EUR": 1.08, "GBP": 1.25, "NZD": 0.61 };
+                    showError(`Could not fetch exchange rates.`);
+                    return null;
                 }
             }
             
@@ -639,7 +626,6 @@
                 }
 
                 let pipValuePerLot;
-                const pipValueInQuoteCurrency = pointValue * contractSize;
                 const usdToQuoteRate = rates[quoteCurrency];
 
                 if (!usdToQuoteRate) {
@@ -647,7 +633,7 @@
                      return;
                 }
                 
-                pipValuePerLot = pipValueInQuoteCurrency / usdToQuoteRate;
+                pipValuePerLot = (pointValue * contractSize) / usdToQuoteRate;
 
                 // Special override for indices and gold
                 if (pairType === 'indices' || pairType === 'gold') {
