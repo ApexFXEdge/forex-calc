@@ -569,10 +569,12 @@
                 const cache = JSON.parse(localStorage.getItem('quoteRateCache'));
                 const now = new Date().getTime();
 
+                // If cache exists and is less than 1 hour old, use it
                 if (cache && cache.base_code === 'USD' && (now - cache.timestamp) < 3600000) {
-                    return cache.rates;
+                    return cache.rates; // Return the stored rates object
                 }
 
+                // Otherwise, fetch new ones
                 try {
                     errorMessage.textContent = `Getting live exchange rates...`;
                     const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
@@ -594,7 +596,8 @@
                     }
                 } catch (error) {
                     console.error('Failed to fetch exchange rate:', error);
-                    showError(`Could not fetch exchange rates. Using estimates.`);
+                    showError(`Could not fetch exchange rates.`);
+                    // Fallback to a static object if API fails
                     return { "USD": 1.0, "JPY": 150.0, "CAD": 1.35, "CHF": 0.90, "AUD": 0.66, "EUR": 1.08, "GBP": 1.25, "NZD": 0.61 };
                 }
             }
@@ -631,7 +634,13 @@
                      return;
                 }
                 
-                pipValuePerLot = pipValueInQuoteCurrency / usdToQuoteRate;
+                // This is the single, universal formula for pip value in USD
+                pipValuePerLot = (pipValueInQuoteCurrency / usdToQuoteRate);
+
+                // --- Special override for indices and gold ---
+                if (pairType === 'indices' || pairType === 'gold') {
+                    pipValuePerLot = contractSize * pointValue;
+                }
                 // --- END NEW LOGIC ---
 
 
