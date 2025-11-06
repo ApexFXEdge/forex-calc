@@ -332,12 +332,6 @@
                         <option value="gold">Gold (XAUUSD)</option>
                     </select>
                 </div>
-
-                <div class="input-group hidden" id="usd-quote-group">
-                    <label for="usd-quote-rate">USD Quote Rate (e.g., USD/JPY)</label>
-                    <input type="number" id="usd-quote-rate" step="any" placeholder="e.g., 154.50">
-                </div>
-
                 <div class="input-group">
                     <label for="trade-direction">Buy/Sell</label>
                     <select id="trade-direction">
@@ -488,6 +482,7 @@
             
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
             <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
+        </div>
         
     </div> <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -525,12 +520,8 @@
             const rrRatioInput = document.getElementById('rr-ratio');
             const desiredProfitInput = document.getElementById('desired-profit');
             const lotSizeInput = document.getElementById('lot-size-input'); 
+            const tpPriceInput = document.getElementById('tp-price-input'); 
             
-            // --- NEW: USD QUOTE RATE ELEMENTS ---
-            const pairTypeSelect = document.getElementById('pair-type');
-            const usdQuoteGroup = document.getElementById('usd-quote-group');
-            const usdQuoteRateInput = document.getElementById('usd-quote-rate');
-
             // --- Function to manage all field visibility ---
             function updateVisibleFields() {
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
@@ -552,6 +543,7 @@
                 rrRatioInput.removeAttribute('required');
                 desiredProfitInput.removeAttribute('required');
                 lotSizeInput.removeAttribute('required');
+                tpPriceInput.removeAttribute('required');
 
                 if (calcMode === 'rr') {
                     slPriceGroup.classList.remove('hidden');
@@ -568,34 +560,21 @@
                 }
             }
             
-            // --- NEW: Function to show/hide JPY rate field ---
-            function checkPairType() {
-                if (pairTypeSelect.value === 'digits3') {
-                    usdQuoteGroup.classList.remove('hidden');
-                    usdQuoteRateInput.setAttribute('required', 'required');
-                } else {
-                    usdQuoteGroup.classList.add('hidden');
-                    usdQuoteRateInput.removeAttribute('required');
-                }
-            }
-            
-            // Add event listeners
+            // Add event listeners to all radio buttons
             calcModeRR.addEventListener('change', updateVisibleFields);
             calcModeLotSize.addEventListener('change', updateVisibleFields); 
-            pairTypeSelect.addEventListener('change', checkPairType); // NEW
 
             form.addEventListener('submit', (e) => {
                 e.preventDefault(); 
                 clearError();
 
-                const pairType = pairTypeSelect.value;
+                const pairType = document.getElementById('pair-type').value;
                 const direction = document.getElementById('trade-direction').value;
                 const entryPrice = parseFloat(entryPriceInput.value);
                 const calcMode = document.querySelector('input[name="calc-mode"]:checked').value;
                 
                 let pointValue;
                 let decimalPlaces;
-                let usdQuoteRate = parseFloat(usdQuoteRateInput.value);
 
                 if (pairType === 'digits5') { 
                     pointValue = 0.0001; 
@@ -603,10 +582,6 @@
                 } else if (pairType === 'digits3') { 
                     pointValue = 0.01; 
                     decimalPlaces = 3; 
-                    if (isNaN(usdQuoteRate) || usdQuoteRate <= 0) {
-                        showError("Please enter a valid USD Quote Rate (e.g., USD/JPY price).");
-                        return;
-                    }
                 } else if (pairType === 'gold') { 
                     pointValue = 0.01; 
                     decimalPlaces = 2; 
@@ -647,10 +622,9 @@
                     if (pairType === 'digits5') { 
                         lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
                     } else if (pairType === 'digits3') { 
-                        // Correct formula: lotSize = (Risk * QuoteRate) / (Pips_in_Price * LotUnits)
-                        lotSize = (riskAmount * usdQuoteRate) / (stopDistancePrice * 100000);
+                        lotSize = riskAmount / ((stopDistancePrice * 100000) / entryPrice);
                     } else if (pairType === 'gold') { 
-                        lotSize = riskAmount / (stopDistancePrice / pointValue);
+                        lotSize = riskAmount / (stopDistancePrice / 0.01);
                     } else { // digits1
                         lotSize = riskAmount / stopDistancePrice;
                     }
@@ -691,8 +665,7 @@
                     if (pairType === 'digits5') {
                         tpDistancePrice = (rewardAmount * pointValue) / (lotSizeInputVal * 10);
                     } else if (pairType === 'digits3') {
-                        // Correct formula: tpDistance = (Reward * QuoteRate) / (LotSize * LotUnits)
-                        tpDistancePrice = (rewardAmount * usdQuoteRate) / (lotSizeInputVal * 100000);
+                        tpDistancePrice = (rewardAmount * entryPrice) / (100000 * lotSizeInputVal);
                     } else if (pairType === 'gold') {
                         tpDistancePrice = (rewardAmount * pointValue) / lotSizeInputVal;
                     } else { // digits1
@@ -727,7 +700,6 @@
                 clearError();
                 calcModeRR.checked = true; 
                 updateVisibleFields(); 
-                checkPairType(); // Also reset the JPY field
             });
 
             function showError(message) {
@@ -740,7 +712,6 @@
             
             // --- Initialize field visibility on page load ---
             updateVisibleFields();
-            checkPairType();
             
             
             /* ========================================
