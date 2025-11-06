@@ -210,7 +210,7 @@
              color: var(--success-color);
         }
 
-        #error-message, #error-message-compound { /* Combined error styles */
+        #error-message, #error-message-compound { 
             color: #dc3545;
             text-align: center;
             margin-top: 15px;
@@ -236,7 +236,7 @@
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.2s ease;
-            line-height: 1.35; /* <-- ADDED FOR 2-LINE TABS */
+            line-height: 1.35; 
         }
         .calc-tab.active {
             background-color: var(--primary-color);
@@ -393,7 +393,7 @@
                 </div>
                 <div class="affiliate-links">
                     <h3>Recommended Partners</h3>
-                    <a href="https.www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
                     <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                     <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
                 </div>
@@ -441,7 +441,7 @@
             </div>
             <div class="affiliate-links">
                 <h3>Recommended Partners</h3>
-                <a href="https.www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
                 <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                 <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
             </div>
@@ -475,13 +475,14 @@
 
             <div class="affiliate-links">
                 <h3>Recommended Partners</h3>
-                <a href="https.www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
                 <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
                 <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
             </div>
             
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
+            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a> 
+        </div>
         
     </div> <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -574,35 +575,27 @@
                 
                 let pointValue;
                 let decimalPlaces;
-                let lotSize; // Moved lotSize up
-
-                // --- FIX: Correct Gold Calculation Logic ---
-                const slPrice = parseFloat(slPriceInput.value);
-                const riskAmount = parseFloat(riskAmountInput.value);
-                const stopDistancePrice = Math.abs(entryPrice - slPrice);
 
                 if (pairType === 'digits5') { 
-                    pointValue = 0.0001;
-                    decimalPlaces = 5;
-                    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                    pointValue = 0.0001; 
+                    decimalPlaces = 5; 
                 } else if (pairType === 'digits3') { 
-                    pointValue = 0.01;
-                    decimalPlaces = 3; // For JPY pairs
-                    lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                    pointValue = 0.01; 
+                    decimalPlaces = 3; 
                 } else if (pairType === 'gold') { 
-                    pointValue = 0.01;
-                    decimalPlaces = 2; // Gold is 2 decimals
-                    lotSize = riskAmount / (stopDistancePrice / 0.01);
-                } else { // 'digits1' for BTC, US30
+                    pointValue = 0.01; 
+                    decimalPlaces = 2; 
+                } else { // digits1
                     pointValue = 1; 
-                    decimalPlaces = 2;
-                    lotSize = riskAmount / stopDistancePrice; 
+                    decimalPlaces = 2; 
                 }
-                // --- END FIX ---
 
                 // --- Run calculations based on selected mode ---
 
                 if (calcMode === 'rr') { 
+                    const slPrice = parseFloat(slPriceInput.value);
+                    const riskAmount = parseFloat(riskAmountInput.value);
+
                     if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount)) {
                         showError("Please fill in all number fields."); return;
                     }
@@ -616,12 +609,26 @@
                         showError("For a Sell, SL Price must be above Entry Price."); return;
                     }
 
-                    let rrRatio, rewardAmount;
+                    let rrRatio, rewardAmount, lotSize;
                     rrRatio = parseFloat(rrRatioInput.value);
                     if (isNaN(rrRatio) || rrRatio <= 0) {
                         showError("Please enter a valid R:R Ratio."); return;
                     }
                     rewardAmount = riskAmount * rrRatio;
+                    
+                    const stopDistancePrice = Math.abs(entryPrice - slPrice);
+
+                    // --- JPY AND GOLD FIX ---
+                    if (pairType === 'digits5') { 
+                        lotSize = riskAmount / ((stopDistancePrice / pointValue) * 10);
+                    } else if (pairType === 'digits3') { 
+                        lotSize = riskAmount / ((stopDistancePrice * 100000) / entryPrice);
+                    } else if (pairType === 'gold') { 
+                        lotSize = riskAmount / (stopDistancePrice / 0.01);
+                    } else { // digits1
+                        lotSize = riskAmount / stopDistancePrice;
+                    }
+                    // --- END FIX ---
 
                     const tpDistancePrice = stopDistancePrice * rrRatio;
                     const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
@@ -639,7 +646,7 @@
                     tpPriceResultItem.classList.remove('hidden');
 
                 } else if (calcMode === 'lot-size') { 
-                    const lotSizeInputVal = parseFloat(lotSizeInput.value); // Renamed to avoid conflict
+                    const lotSizeInputVal = parseFloat(lotSizeInput.value);
                     const rewardAmount = parseFloat(desiredProfitInput.value);
 
                     if (isNaN(entryPrice) || isNaN(lotSizeInputVal) || isNaN(rewardAmount)) {
@@ -654,20 +661,23 @@
 
                     let tpDistancePrice;
 
-                    if (pairType === 'digits5' || pairType === 'digits3') {
+                    // --- JPY AND GOLD FIX ---
+                    if (pairType === 'digits5') {
                         tpDistancePrice = (rewardAmount * pointValue) / (lotSizeInputVal * 10);
+                    } else if (pairType === 'digits3') {
+                        tpDistancePrice = (rewardAmount * entryPrice) / (100000 * lotSizeInputVal);
                     } else if (pairType === 'gold') {
                         tpDistancePrice = (rewardAmount * pointValue) / lotSizeInputVal;
                     } else { // digits1
                         tpDistancePrice = rewardAmount / lotSizeInputVal;
                     }
+                    // --- END FIX ---
                     
                     const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
 
                     // Display results
                     tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
                     
-                    // --- FIX: Clear old results ---
                     rewardResult.textContent = '';
                     lotSizeResult.textContent = '';
                     rrRatioResult.textContent = '';
@@ -827,4 +837,3 @@
 
 </body>
 </html>
-
