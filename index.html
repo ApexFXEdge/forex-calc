@@ -43,16 +43,6 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-
-            /* --- NEW BACKGROUND STYLES --- */
-        background-image: url('/images/bg_trading_chart.png'); /* Adjust path if needed */
-        background-size: cover; /* Cover the entire viewport */
-        background-position: center center; /* Center the image */
-        background-repeat: no-repeat; /* Don't repeat the image */
-        background-attachment: fixed; /* Keep image fixed when scrolling */
-        /* --- END NEW BACKGROUND STYLES --- */
-
-            
         }
 
         .calculator-container {
@@ -93,8 +83,6 @@
             font-size: 1em;
             box-sizing: border-box;
         }
-
-        /* --- REMOVED Radio Button CSS --- */
         
         input:focus, select:focus {
             outline: none;
@@ -438,15 +426,70 @@
                 </div>
             </div>
         </div> <div id="compound-calc-wrapper" class="hidden">
-             </div>
+            <div class="input-group">
+                <label for="compound-start-balance">Starting balance</label>
+                <input type="number" id="compound-start-balance" placeholder="e.g., 20000">
+            </div>
+            <div class="button-group">
+                <div class="input-group">
+                    <label for="compound-periods">Number of periods</label>
+                    <input type="number" id="compound-periods" placeholder="e.g., 12">
+                </div>
+                <div class="input-group">
+                    <label for="compound-gain">Gain % per period</label>
+                    <input type="number" id="compound-gain" placeholder="e.g., 5">
+                </div>
+            </div>
+            
+            <div id="error-message-compound"></div>
 
-        <div id="calendar-calc-wrapper" class="hidden">
-             </div>
+            <div class="button-group single">
+                <button type="button" id="compound-calc-btn">Calculate</button>
+            </div>
+            <div class="affiliate-links">
+                <h3>Recommended Partners</h3>
+                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+            </div>
+            <div class="compound-results-summary hidden" id="compound-summary">
+                <div>
+                    <label>Ending balance</label>
+                    <span id="compound-ending-balance"></span>
+                </div>
+                <div>
+                    <label>Total Gain</label>
+                    <span id="compound-total-gain"></span>
+                </div>
+            </div>
+            <div class="compound-results-table hidden" id="compound-table">
+                <div class="table-row header">
+                    <span>Period</span>
+                    <span>Starting balance</span>
+                    <span>Total Gain</span>
+                    <span>Ending balance</span>
+                </div>
+                <div id="compound-table-body"></div>
+            </div>
+        </div> <div id="calendar-calc-wrapper" class="hidden">
+            
+            <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%; height: 600px;"></iframe>
+            <div style="margin-top: 10px;">
+                    <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
+                     <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
+                     by Myfxbook.com
+                    </div></div>
 
-
-        <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
+            <div class="affiliate-links">
+                <h3>Recommended Partners</h3>
+                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+            </div>
+            
+        </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
             <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
-        </div>
+            </div>
         
     </div> <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -467,7 +510,6 @@
             const rrRatioResultItem = document.getElementById('rr-ratio-result-item');
             const tpPriceResultItem = document.getElementById('tp-price-result-item');
 
-            // --- NEW: Get Dropdown instead of Radio ---
             const calcModeSelect = document.getElementById('calc-mode-select');
             
             const entryPriceGroup = document.getElementById('entry-price-group');
@@ -488,7 +530,6 @@
             
             // --- Function to manage all field visibility ---
             function updateVisibleFields() {
-                // --- NEW: Read value from select ---
                 const calcMode = calcModeSelect.value;
 
                 resultsDiv.style.display = 'none';
@@ -523,7 +564,7 @@
                 }
             }
             
-            // --- NEW: Add event listener to select ---
+            // Add event listeners
             calcModeSelect.addEventListener('change', updateVisibleFields);
             
             // --- API KEY AND FETCH FUNCTION ---
@@ -574,6 +615,18 @@
                 }
             }
             
+            function getRateFromCache(quoteCurrency) {
+                 const cache = JSON.parse(localStorage.getItem('quoteRateCache'));
+                 const now = new Date().getTime();
+                 if (cache && cache.rates && (now - cache.timestamp) < 3600000) {
+                     if (cache.rates[quoteCurrency]) {
+                        return cache.rates[quoteCurrency];
+                     }
+                 }
+                 return null; 
+            }
+
+
             // --- UPDATED: Make the form submission async ---
             form.addEventListener('submit', async (e) => {
                 e.preventDefault(); 
@@ -585,7 +638,6 @@
 
                 const direction = document.getElementById('trade-direction').value;
                 const entryPrice = parseFloat(entryPriceInput.value);
-                // --- NEW: Read value from select ---
                 const calcMode = calcModeSelect.value;
                 
                 let pointValue;
@@ -618,14 +670,29 @@
                     
                     errorMessage.textContent = `Getting latest ${quoteCurrency}/USD rate...`;
                     
-                    let rate = await getUsdQuoteRate(pairType); 
-                    if (rate === null) return; 
-
+                    let rate;
+                    const allRates = await getUsdQuoteRate(pairType);
+                    if (allRates === null) return;
+                    
+                    // We need to re-fetch if it's not JPY and cache is old
+                    if ((pairType === 'reverse' || pairType === 'cross') && !getRateFromCache(quoteCurrency)) {
+                         const newAllRates = JSON.parse(localStorage.getItem('quoteRateCache')).rates;
+                         rate = newAllRates[quoteCurrency];
+                    } else if (pairType === 'jpy') {
+                         rate = allRates; // This is the JPY rate
+                    } else {
+                         rate = getRateFromCache(quoteCurrency);
+                    }
+                    
                     if (pairType === 'jpy') {
                         usdQuoteRate = rate; // This is USD/JPY rate
                     } else {
-                        // rate is (e.g.) CAD/USD rate
-                        usdQuoteRate = rate; 
+                        usdQuoteRate = rate; // This is (e.g.) CAD/USD rate
+                    }
+                    
+                    if (!usdQuoteRate) {
+                        showError(`Could not find ${quoteCurrency} rate. Calculation failed.`);
+                        return;
                     }
                     
                     clearError(); 
@@ -745,7 +812,6 @@
                 form.reset();
                 resultsDiv.style.display = 'none';
                 clearError();
-                // --- NEW: Reset select ---
                 calcModeSelect.value = 'rr';
                 updateVisibleFields(); 
             });
@@ -763,7 +829,7 @@
             
             
             /* ========================================
-               TABS & COMPOUND CALC (Unchanged)
+               TABS & COMPOUND CALC
             ========================================
             */
 
@@ -885,4 +951,3 @@
 
 </body>
 </html>
-
