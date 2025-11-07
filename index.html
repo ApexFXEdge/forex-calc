@@ -71,7 +71,7 @@
         }
 
         /* --- THIS IS THE FIX FOR THE "JUMP" --- */
-        #calculator-form, #calendar-form {
+        #calculator-form, #compound-form, #calendar-form {
             margin-block-start: 0; /* Removes default top margin from all forms */
         }
         /* --- END OF FIX --- */
@@ -205,14 +205,14 @@
              color: var(--success-color);
         }
 
-        #error-message { 
+        #error-message, #error-message-compound { 
             color: #dc3545;
             text-align: center;
             margin-top: 15px;
             min-height: 20px;
         }
         
-        /* --- STYLES FOR TABS --- */
+        /* --- STYLES FOR TABS AND COMPOUND CALC --- */
         .calc-nav {
             display: flex;
             width: 100%;
@@ -221,7 +221,7 @@
             background-color: var(--bg-color);
         }
         .calc-tab {
-            width: 50%; /* --- UPDATED: Changed from 33.33% to 50% --- */
+            width: 33.33%; 
             padding: 12px 5px; 
             font-size: 0.9em;  
             font-weight: 600;
@@ -239,6 +239,58 @@
         }
         .button-group.single {
             grid-template-columns: 1fr;
+        }
+        #compound-calc-btn {
+            background-color: var(--primary-color);
+            color: #1a1a1a;
+            width: 100%;
+        }
+        #compound-calc-btn:hover {
+            opacity: 0.85;
+        }
+        .compound-results-summary {
+            display: flex;
+            justify-content: space-around;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 20px;
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .compound-results-summary label {
+            font-size: 0.9em;
+            color: var(--label-color);
+            margin-bottom: 5px;
+        }
+        .compound-results-summary span {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+        .compound-results-summary div:first-child span {
+            color: var(--success-color);
+        }
+        .compound-results-table {
+            margin-top: 20px;
+        }
+        .table-row {
+            display: grid;
+            grid-template-columns: 0.5fr 1fr 1fr 1fr;
+            text-align: right;
+            padding: 10px 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .table-row.header {
+            font-weight: 600;
+            color: var(--label-color);
+            font-size: 0.8em;
+        }
+        .table-row span:first-child {
+            text-align: left;
+            color: var(--label-color);
+        }
+        .table-row.header span:first-child {
+            color: var(--label-color);
         }
         
         /* --- CALENDAR WIDGET STYLES --- */
@@ -260,6 +312,7 @@
         
         <nav class="calc-nav">
             <button id="tab-position-calc" class="calc-tab active">Profit<br>Calculator</button>
+            <button id="tab-compound-calc" class="calc-tab">Compound<br>Calculator</button>
             <button id="tab-calendar-calc" class="calc-tab">Economic<br>Calendar</button>
         </nav>
 
