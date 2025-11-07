@@ -1,868 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <link rel="icon" type="image/x-icon" href="/traders-edge/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="/traders-edge/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/traders-edge/favicon-16x16.png">
-    
-    <link rel="apple-touch-icon" sizes="180x180" href="/traders-edge/apple-touch-icon.png">
-    
-    <link rel="manifest" href="/traders-edge/site.webmanifest">
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex FX Trader's Edge - Free Forex Tools</title>
     
-    <title>Apex FX</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        
         :root {
-            --bg-color: #1a1a1a;
-            --surface-color: #2c2c2c;
-            --primary-color: #e6c300;
-            --text-color: #f0f0f0;
-            --label-color: #a0a0a0;
+            --bg-color: #121212;
+            --container-bg: rgba(30, 30, 30, 0.9);
+            --text-color: #e0e0e0;
+            --text-color-secondary: #a0a0a0;
+            --accent-color: #00bfff;
             --border-color: #444;
-            --success-color: #28a745;
-            --aqua-blue: #00FFFF;
-        }
-
-        .hidden {
-            display: none;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
             background-color: var(--bg-color);
             color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
+            margin: 0;
+            
+            /* --- BACKGROUND IMAGE RESTORED --- */
+            background-image: url('/images/bg_trading_chart.jpg'); 
+            background-size: cover;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* --- END BACKGROUND --- */
         }
-
-        .calculator-container {
-            background-color: var(--surface-color);
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-            width: 100%;
-            max-width: 420px;
-        }
-
-        h1 {
-            text-align: center;
-            margin-top: 0;
-            margin-bottom: 25px;
-            font-size: 1.3em;
-            color: var(--aqua-blue);
-        }
-        
-       /* --- THIS IS THE FIX FOR THE "JUMP" --- */
-#calculator-form, #compound-form, #calendar-form {
-    margin-block-start: 0; /* Removes default top margin from all forms */
-}
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-            color: var(--label-color);
-        }
-
-        input, select {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--bg-color);
-            border: 1px solid var(--border-color);
+            background-color: var(--container-bg);
             border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        nav {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+        nav a {
             color: var(--text-color);
-            font-size: 1em;
-            box-sizing: border-box;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 15px;
+            font-size: 1.1em;
+        }
+        nav a:hover, .footer a:hover, .feature-item a:hover {
+            color: var(--accent-color);
+        }
+        h1 {
+            color: var(--accent-color);
+            text-align: center;
+            font-size: 1.3em;
+            margin-bottom: 30px;
         }
         
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(230, 195, 0, 0.25);
-        }
-        
-        .button-group {
+        .features-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 25px;
+            gap: 25px;
         }
-
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        #calculate-btn {
-            background-color: var(--primary-color);
-            color: #1a1a1a;
-        }
-        
-        #calculate-btn:hover {
-            opacity: 0.85;
-        }
-        
-        #reset-btn {
-            background-color: var(--border-color);
-            color: var(--text-color);
-        }
-
-        #reset-btn:hover {
-            background-color: #555;
-        }
-
-        .affiliate-links {
-            text-align: center;
-            margin-top: 25px;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
-        }
-        .affiliate-links h3 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            color: var(--label-color);
-            font-size: 1em;
-        }
-        
-        .affiliate-links a {
-            display: block;
-            background-color: var(--aqua-blue);
-            color: #1a1a1a; 
-            text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            font-weight: 600;
-            transition: opacity 0.2s ease;
-        }
-        .affiliate-links a:hover {
-            opacity: 0.85;
-        }
-
-        .results {
-            margin-top: 30px;
-            background-color: var(--bg-color);
+        .feature-item {
+            background-color: rgba(44, 44, 44, 0.7);
             padding: 20px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            display: none; 
         }
-        
-        .results h2 {
+        .feature-item h3 {
             margin-top: 0;
-            text-align: center;
-            font-size: 1.2em;
-            color: var(--label-color);
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.1em;
-            margin-bottom: 12px;
-        }
-        
-        .result-item span:first-child {
-            color: var(--label-color);
-        }
-
-        .result-item span:last-child {
-            font-weight: 700;
             font-size: 1.2em;
             color: var(--text-color);
         }
-        
-        .result-item.reward span:last-child {
-             color: var(--success-color);
+        .feature-item p {
+            font-size: 0.95em;
+            color: var(--text-color-secondary);
+            margin-bottom: 15px;
         }
-
-        #error-message, #error-message-compound { 
-            color: #dc3545;
-            text-align: center;
-            margin-top: 15px;
-            min-height: 20px;
-        }
-        
-        /* --- STYLES FOR TABS AND COMPOUND CALC --- */
-        .calc-nav {
-            display: flex;
-            width: 100%;
-            margin-bottom: 25px;
-            border-radius: 8px;
-            background-color: var(--bg-color);
-        }
-        .calc-tab {
-            width: 33.33%; 
-            padding: 12px 5px; 
-            font-size: 0.9em;  
+        .feature-item a {
+            color: var(--accent-color);
+            text-decoration: none;
             font-weight: 600;
-            border: none;
-            background-color: transparent;
-            color: var(--label-color);
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            line-height: 1.35; 
         }
-        .calc-tab.active {
-            background-color: var(--primary-color);
-            color: var(--bg-color);
-        }
-        .button-group.single {
-            grid-template-columns: 1fr;
-        }
-        #compound-calc-btn {
-            background-color: var(--primary-color);
-            color: #1a1a1a;
-            width: 100%;
-        }
-        #compound-calc-btn:hover {
-            opacity: 0.85;
-        }
-        .compound-results-summary {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 20px;
+        
+        .charts-section {
+            margin-top: 30px;
+            padding-top: 20px;
             border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
         }
-        .compound-results-summary label {
+        .charts-section h2 {
+            text-align: center;
+            color: var(--accent-color);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
             font-size: 0.9em;
-            color: var(--label-color);
-            margin-bottom: 5px;
+            color: #999; 
+            border-top: 1px solid #444;
+            padding-top: 20px;
         }
-        .compound-results-summary span {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: var(--text-color);
+        .footer p {
+            margin: 10px 0; 
+            font-size: 1em;
         }
-        .compound-results-summary div:first-child span {
-            color: var(--success-color);
+        .footer a {
+            color: #999;
+            text-decoration: underline;
         }
-        .compound-results-table {
-            margin-top: 20px;
+
+        /* Responsive for mobile */
+        @media (max-width: 600px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            nav a {
+                display: block;
+                margin: 10px 0;
+            }
         }
-        .table-row {
-            display: grid;
-            grid-template-columns: 0.5fr 1fr 1fr 1fr;
-            text-align: right;
-            padding: 10px 5px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .table-row.header {
-            font-weight: 600;
-            color: var(--label-color);
-            font-size: 0.8em;
-        }
-        .table-row span:first-child {
-            text-align: left;
-            color: var(--label-color);
-        }
-        .table-row.header span:first-child {
-            color: var(--label-color);
-        }
-        
-        /* --- CALENDAR WIDGET STYLES --- */
-        #calendar-calc-wrapper {
-            width: 100%;
-        }
-        #calendar-calc-wrapper iframe {
-            width: 100%;
-            height: 600px; 
-            border: none; 
-        }
-        
     </style>
 </head>
 <body>
 
-    <div class="calculator-container">
+    <div class="container">
+    
+        <nav>
+            <a href="/">Home</a>
+            <a href="about.html">About</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        
         <h1>Apex FX Trader's Edge</h1>
         
-        <nav class="calc-nav">
-            <button id="tab-position-calc" class="calc-tab active">Profit<br>Calculator</button>
-            <button id="tab-compound-calc" class="calc-tab">Compound<br>Calculator</button>
-            <button id="tab-calendar-calc" class="calc-tab">Economic<br>Calendar</button>
-        </nav>
-
-        <div id="position-calc-wrapper">
-            <form id="calculator-form">
-                <div class="input-group">
-                    <label for="pair-type">Instrument</label>
-                    <select id="pair-type">
-                        <option value="AUD/CAD" data-pair-type="cross" data-quote="CAD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">AUD/CAD</option>
-                        <option value="AUD/CHF" data-pair-type="cross" data-quote="CHF" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">AUD/CHF</option>
-                        <option value="AUD/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">AUD/JPY</option>
-                        <option value="AUD/NZD" data-pair-type="cross" data-quote="NZD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">AUD/NZD</option>
-                        <option value="AUD/USD" data-pair-type="standard" data-quote="USD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">AUD/USD</option>
-                        <option value="BTC/USD" data-pair-type="indices" data-quote="USD" data-point-value="1" data-decimal-places="2" data-contract-size="1">BTC/USD</option>
-                        <option value="CAD/CHF" data-pair-type="cross" data-quote="CHF" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">CAD/CHF</option>
-                        <option value="CAD/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">CAD/JPY</option>
-                        <option value="CHF/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">CHF/JPY</option>
-                        <option value="EUR/AUD" data-pair-type="cross" data-quote="AUD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">EUR/AUD</option>
-                        <option value="EUR/CAD" data-pair-type="cross" data-quote="CAD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">EUR/CAD</option>
-                        <option value="EUR/CHF" data-pair-type="cross" data-quote="CHF" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">EUR/CHF</option>
-                        <option value="EUR/GBP" data-pair-type="cross" data-quote="GBP" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">EUR/GBP</option>
-                        <option value="EUR/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">EUR/JPY</option>
-                        <option value="EUR/NZD" data-pair-type="cross" data-quote="NZD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">EUR/NZD</option>
-                        <option value="EUR/USD" data-pair-type="standard" data-quote="USD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">EUR/USD</option>
-                        <option value="GBP/AUD" data-pair-type="cross" data-quote="AUD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">GBP/AUD</option>
-                        <option value="GBP/CAD" data-pair-type="cross" data-quote="CAD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">GBP/CAD</option>
-                        <option value="GBP/CHF" data-pair-type="cross" data-quote="CHF" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">GBP/CHF</option>
-                        <option value="GBP/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">GBP/JPY</option>
-                        <option value="GBP/NZD" data-pair-type="cross" data-quote="NZD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">GBP/NZD</option>
-                        <option value="GBP/USD" data-pair-type="standard" data-quote="USD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">GBP/USD</option>
-                        <option value="NAS100" data-pair-type="indices" data-quote="USD" data-point-value="1" data-decimal-places="2" data-contract-size="1">NAS100</option>
-                        <option value="NZD/CAD" data-pair-type="cross" data-quote="CAD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">NZD/CAD</option>
-                        <option value="NZD/CHF" data-pair-type="cross" data-quote="CHF" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">NZD/CHF</option>
-                        <option value="NZD/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">NZD/JPY</option>
-                        <option value="NZD/USD" data-pair-type="standard" data-quote="USD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">NZD/USD</option>
-                        <option value="US30" data-pair-type="indices" data-quote="USD" data-point-value="1" data-decimal-places="2" data-contract-size="1">US30</option>
-                        <option value="USD/CAD" data-pair-type="reverse" data-quote="CAD" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">USD/CAD</option>
-                        <option value="USD/CHF" data-pair-type="reverse" data-quote="CHF" data-point-value="0.0001" data-decimal-places="5" data-contract-size="100000">USD/CHF</option>
-                        <option value="USD/JPY" data-pair-type="jpy" data-quote="JPY" data-point-value="0.01" data-decimal-places="3" data-contract-size="100000">USD/JPY</option>
-                        <option value="XAU/USD" data-pair-type="gold" data-quote="USD" data-point-value="0.01" data-decimal-places="2" data-contract-size="100">XAU/USD (Gold)</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="trade-direction">Buy/Sell</label>
-                    <select id="trade-direction">
-                        <option value="buy">Buy</option>
-                        <option value="sell">Sell</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label for="calc-mode-select">Calculate By:</label>
-                    <select id="calc-mode-select">
-                        <option value="rr" selected>R:R Ratio</option>
-                        <option value="lot-size">Lot Size</option>
-                    </select>
-                </div>
-                
-                <div class="input-group" id="entry-price-group">
-                    <label for="entry-price">Entry Price</label>
-                    <input type="number" id="entry-price" step="any" placeholder="e.g., 0.65555" required>
-                </div>
-
-                <div class="input-group" id="sl-price-group">
-                    <label for="sl-price">SL Price</label>
-                    <input type="number" id="sl-price" step="any" placeholder="e.g., 0.65701" required>
-                </div>
-                
-                <div class="input-group" id="risk-amount-group">
-                    <label for="risk-amount">Risk ($)</label>
-                    <input type="number" id="risk-amount" step="any" placeholder="e.g., 50" required>
-                </div>
-                
-                <div class="input-group" id="rr-group">
-                    <label for="rr-ratio">R:R</label>
-                    <input type="number" id="rr-ratio" step="any" placeholder="e.g., 4" required>
-                </div>
-
-                <div class="input-group hidden" id="profit-group">
-                    <label for="desired-profit">Profit Target ($)</label>
-                    <input type="number" id="desired-profit" step="any" placeholder="e.g., 200">
-                </div>
-                
-                <div class="input-group hidden" id="lot-size-input-group">
-                    <label for="lot-size-input">Lot Size</label>
-                    <input type="number" id="lot-size-input" step="any" placeholder="e.g., 1.5">
-                </div>
-
-                <div id="error-message"></div>
-                <div class="button-group">
-                    <button type="submit" id="calculate-btn">Calculate</button>
-                    <button type="button" id="reset-btn">Reset</button>
-                </div>
-                <div class="affiliate-links">
-                    <h3>Recommended Partners</h3>
-                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
-                    <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
-                    <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
-                </div>
-            </form>
-            <div class="results" id="results-display">
-                <h2 id="results-section">Trade Details</h2>
-                
-                <div class="result-item reward" id="reward-result-item">
-                    <span>Profit ($):</span>
-                    <span id="reward-result"></span>
-                </div>
-                 <div class="result-item" id="lot-size-result-item">
-                    <span>Lot Size:</span>
-                    <span id="lot-size-result"></span>
-                </div>
-                <div class="result-item" id="rr-ratio-result-item">
-                    <span>R:R Ratio:</span>
-                    <span id="rr-ratio-result"></span>
-                </div>
-                <div class="result-item" id="tp-price-result-item">
-                    <span>TP Price:</span>
-                    <span id="tp-price-result"></span>
-                </div>
+        <div class="features-grid">
+            <div class="feature-item">
+                <h3>🧮 Trading Calculators</h3>
+                <p>Access our free calculators, including Profit and Compound Calculator to plan your trades.</p>
+                <a href="https://apexfxedge.github.io/traders-edge/" target="_blank">Open Calculators &rarr;</a>
             </div>
-        </div> <div id="compound-calc-wrapper" class="hidden">
-            <form id="compound-form">
-                <div class="input-group">
-                    <label for="compound-start-balance">Starting balance</label>
-                    <input type="number" id="compound-start-balance" placeholder="e.g., 20000">
-                </div>
-                <div class="button-group">
-                    <div class="input-group">
-                        <label for="compound-periods">Number of periods</label>
-                        <input type="number" id="compound-periods" placeholder="e.g., 12">
-                    </div>
-                    <div class="input-group">
-                        <label for="compound-gain">Gain % per period</label>
-                        <input type="number" id="compound-gain" placeholder="e.g., 5">
-                    </div>
-                </div>
-                
-                <div id="error-message-compound"></div>
+            
+            <div class="feature-item">
+                <h3>🗓️ Real-time Economic Calendar</h3>
+                <p>Stay ahead of market-moving events with our built-in calendar, pre-filtered for medium and high-impact news.</p>
+                <a href="https://apexfxedge.github.io/traders-edge/" target="_blank">View Calendar &rarr;</a>
+            </div>
 
-                <div class="button-group single">
-                    <button type="button" id="compound-calc-btn">Calculate</button>
-                </div>
-                <div class="affiliate-links">
-                    <h3>Recommended Partners</h3>
-                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
-                    <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
-                    <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
-                </div>
-                <div class="compound-results-summary hidden" id="compound-summary">
-                    <div>
-                        <label>Ending balance</label>
-                        <span id="compound-ending-balance"></span>
-                    </div>
-                    <div>
-                        <label>Total Gain</label>
-                        <span id="compound-total-gain"></span>
-                    </div>
-                </div>
-                <div class="compound-results-table hidden" id="compound-table">
-                    <div class="table-row header">
-                        <span>Period</span>
-                        <span>Starting balance</span>
-                        <span>Total Gain</span>
-                        <span>Ending balance</span>
-                    </div>
-                    <div id="compound-table-body"></div>
-                </div>
-            </form>
-        </div> <div id="calendar-calc-wrapper" class="hidden">
-            <form id="calendar-form">
-                <iframe src="https://widget.myfxbook.com/widget/calendar.html?lang=en&impacts=2,3&symbols=AUD,CAD,CHF,EUR,GBP,JPY,NZD,USD" style="border: 0; width:100%; height: 600px;"></iframe>
-                <div style="margin-top: 10px;">
-                        <div style="width: fit-content; margin: auto;font-family: roboto,sans-serif!important; font-size: 13px; color: #666666;">
-                         <a href="https://www.myfxbook.com/forex-economic-calendar?utm_source=widget13&utm_medium=link&utm_campaign=copyright" title="Economic Calendar" class="myfxbookLink" target="_blank" rel="noopener"><b style="color:#666666">Economic Calendar</b></a>
-                         by Myfxbook.com
-                        </div></div>
+            <div class="feature-item">
+                <h3>💬 24/5 Live Support</h3>
+                <p>Have questions? Our support team is available around the clock to help you with any inquiries.</p>
+                <a href="contact.html">Contact Us &rarr;</a>
+            </div>
 
-                <div class="affiliate-links">
-                    <h3>Recommended Partners</h3>
-                    <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
-                    <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
-                    <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
-                </div>
-            </form>
-        </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
-            <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
+            <div class="feature-item">
+                <h3>💰 FX Rebates & Discounts</h3>
+                <p>Check out our recommended partners for exclusive fee discounts, rebates, and platform sign-up bonuses.</p>
+                <a href="https://apexfxedge.github.io/traders-edge/" target="_blank">View Partners &rarr;</a>
+            </div>
         </div>
-        
-    </div> <script>
-        document.addEventListener('DOMContentLoaded', () => {
+
+        <div class="charts-section">
+            <h2>Live Market Overview</h2>
             
-            // --- ALL POSITION SIZE CALC ELEMENTS ---
-            const form = document.getElementById('calculator-form');
-            const resetButton = document.getElementById('reset-btn');
-            const resultsDiv = document.getElementById('results-display');
-            const errorMessage = document.getElementById('error-message');
+            <div class="tradingview-widget-container" style="height: 450px; width: 100%;">
+              <div class="tradingview-widget-container__widget" style="height: 100%; width: 100%;"></div>
+              <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-overview.js" async>
+              {
+                "colorTheme": "dark",
+                "dateRange": "12M",
+                "showChart": true,
+                "locale": "en",
+                "width": "100%",
+                "height": "100%",
+                "largeChartUrl": "",
+                "isTransparent": true,
+                "showSymbolLogo": true,
+                "showFloatingTooltip": false,
+                "plotLineColorGrowing": "rgba(41, 98, 255, 1)",
+                "plotLineColorFalling": "rgba(41, 98, 255, 1)",
+                "gridLineColor": "rgba(42, 46, 57, 0)",
+                "scaleFontColor": "rgba(120, 123, 134, 1)",
+                "belowLineFillColorGrowing": "rgba(41, 98, 255, 0.12)",
+                "belowLineFillColorFalling": "rgba(41, 98, 255, 0.12)",
+                "belowLineFillColorGrowingBottom": "rgba(41, 98, 255, 0)",
+                "belowLineFillColorFallingBottom": "rgba(41, 98, 255, 0)",
+                "symbolActiveColor": "rgba(41, 98, 255, 0.12)",
+                "tabs": [
+                  {
+                    "title": "Forex",
+                    "symbols": [
+                      { "s": "FX:EURUSD" }, { "s": "FX:GBPUSD" }, { "s":":USDJPY" }, 
+                      { "s": "FX:AUDUSD" }, { "s": "FX:USDCAD" }, { "s": "FX:USDCHF" }
+                    ],
+                    "originalTitle": "Forex"
+                  },
+                  {
+                    "title": "Indices",
+                    "symbols": [
+                      { "s": "FOREXCOM:SPXUSD" }, { "s": "FOREXCOM:NSXUSD" }, { "s": "FOREXCOM:DJI" }, 
+                      { "s": "INDEX:DEU40" }, { "s": "FOREXCOM:UKXGBP" }
+                    ],
+                    "originalTitle": "Indices"
+                  },
+                  {
+                    "title": "Commodities",
+                    "symbols": [
+                      { "s": "OANDA:XAUUSD" }, { "s": "OANDA:XAGUSD" }, { "s": "TVC:USOIL" }
+                    ],
+                    "originalTitle": "Commodities"
+                  }
+                ]
+              }
+              </script>
+            </div>
+            </div>
 
-            const rewardResult = document.getElementById('reward-result');
-            const lotSizeResult = document.getElementById('lot-size-result');
-            const tpPriceResult = document.getElementById('tp-price-result');
-            const rrRatioResult = document.getElementById('rr-ratio-result');
-            
-            const rewardResultItem = document.getElementById('reward-result-item');
-            const lotSizeResultItem = document.getElementById('lot-size-result-item');
-            const rrRatioResultItem = document.getElementById('rr-ratio-result-item');
-            const tpPriceResultItem = document.getElementById('tp-price-result-item');
-
-            const calcModeSelect = document.getElementById('calc-mode-select');
-            
-            const entryPriceGroup = document.getElementById('entry-price-group');
-            const slPriceGroup = document.getElementById('sl-price-group');
-            const riskAmountGroup = document.getElementById('risk-amount-group');
-            const rrGroup = document.getElementById('rr-group');
-            const profitGroup = document.getElementById('profit-group');
-            const lotSizeInputGroup = document.getElementById('lot-size-input-group'); 
-            
-            const entryPriceInput = document.getElementById('entry-price');
-            const slPriceInput = document.getElementById('sl-price');
-            const riskAmountInput = document.getElementById('risk-amount');
-            const rrRatioInput = document.getElementById('rr-ratio');
-            const desiredProfitInput = document.getElementById('desired-profit');
-            const lotSizeInput = document.getElementById('lot-size-input'); 
-            
-            const pairTypeSelect = document.getElementById('pair-type');
-            
-            // --- Function to manage all field visibility ---
-            function updateVisibleFields() {
-                const calcMode = calcModeSelect.value;
-
-                resultsDiv.style.display = 'none';
-                clearError();
-                
-                slPriceGroup.classList.add('hidden');
-                riskAmountGroup.classList.add('hidden');
-                rrGroup.classList.add('hidden');
-                profitGroup.classList.add('hidden');
-                lotSizeInputGroup.classList.add('hidden');
-
-                slPriceInput.removeAttribute('required');
-                riskAmountInput.removeAttribute('required');
-                rrRatioInput.removeAttribute('required');
-                desiredProfitInput.removeAttribute('required');
-                lotSizeInput.removeAttribute('required');
-
-                if (calcMode === 'rr') {
-                    slPriceGroup.classList.remove('hidden');
-                    riskAmountGroup.classList.remove('hidden');
-                    rrGroup.classList.remove('hidden');
-                    slPriceInput.setAttribute('required', 'required');
-                    riskAmountInput.setAttribute('required', 'required');
-                    rrRatioInput.setAttribute('required', 'required');
-                } else if (calcMode === 'lot-size') { 
-                    lotSizeInputGroup.classList.remove('hidden');
-                    profitGroup.classList.remove('hidden');
-                    lotSizeInput.setAttribute('required', 'required');
-                    desiredProfitInput.setAttribute('required', 'required');
-                }
-            }
-            
-            calcModeSelect.addEventListener('change', updateVisibleFields);
-            
-            // --- API KEY AND FETCH FUNCTION ---
-            const API_KEY = '5bc51041ac42f88a6bb3e07b'; 
-            
-            async function getRatesFromApi() {
-                const cache = JSON.parse(localStorage.getItem('quoteRateCache'));
-                const now = new Date().getTime();
-
-                if (cache && cache.base_code === 'USD' && (now - cache.timestamp) < 3600000) {
-                    return cache.rates;
-                }
-
-                try {
-                    errorMessage.textContent = `Getting live exchange rates...`;
-                    const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    const data = await response.json();
-                    
-                    if (data.result === 'success') {
-                        localStorage.setItem('quoteRateCache', JSON.stringify({ 
-                            rates: data.conversion_rates, 
-                            base_code: 'USD', 
-                            timestamp: now 
-                        }));
-                        clearError();
-                        return data.conversion_rates;
-                    } else {
-                        throw new Error(data['error-type'] || 'Unknown API error');
-                    }
-                } catch (error) {
-                    console.error('Failed to fetch exchange rate:', error);
-                    showError(`Could not fetch exchange rates.`);
-                    return null;
-                }
-            }
-            
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault(); 
-                clearError();
-                
-                const selectedOption = pairTypeSelect.options[pairTypeSelect.selectedIndex];
-                const pairType = selectedOption.dataset.pairType;
-                const quoteCurrency = selectedOption.dataset.quote;
-                const pointValue = parseFloat(selectedOption.dataset.pointValue);
-                const decimalPlaces = parseInt(selectedOption.dataset.decimalPlaces);
-                const contractSize = parseInt(selectedOption.dataset.contractSize);
-
-                const direction = document.getElementById('trade-direction').value;
-                const entryPrice = parseFloat(entryPriceInput.value);
-                const calcMode = calcModeSelect.value;
-                
-                const rates = await getRatesFromApi();
-                if (!rates) {
-                    showError("Calculation failed. Could not get exchange rates.");
-                    return;
-                }
-
-                let pipValuePerLot;
-                const usdToQuoteRate = rates[quoteCurrency];
-
-                if (!usdToQuoteRate) {
-                     showError(`Could not find live rate for ${quoteCurrency}.`);
-                     return;
-                }
-                
-                pipValuePerLot = (pointValue * contractSize) / usdToQuoteRate;
-
-                // Special override for indices and gold
-                if (pairType === 'indices' || pairType === 'gold') {
-                    pipValuePerLot = contractSize * pointValue;
-                }
-
-                // --- Run calculations based on selected mode ---
-
-                if (calcMode === 'rr') { 
-                    const slPrice = parseFloat(slPriceInput.value);
-                    const riskAmount = parseFloat(riskAmountInput.value);
-
-                    if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount)) {
-                        showError("Please fill in all number fields."); return;
-                    }
-                    if (riskAmount <= 0) {
-                         showError("Risk Amount must be greater than 0."); return;
-                    }
-                    if (direction === 'buy' && entryPrice <= slPrice) {
-                        showError("For a Buy, SL Price must be below Entry Price."); return;
-                    }
-                    if (direction === 'sell' && entryPrice >= slPrice) {
-                        showError("For a Sell, SL Price must be above Entry Price."); return;
-                    }
-
-                    let rrRatio, rewardAmount, lotSize;
-                    rrRatio = parseFloat(rrRatioInput.value);
-                    if (isNaN(rrRatio) || rrRatio <= 0) {
-                        showError("Please enter a valid R:R Ratio."); return;
-                    }
-                    rewardAmount = riskAmount * rrRatio;
-                    
-                    const stopDistancePips = Math.abs(entryPrice - slPrice) / pointValue;
-                    
-                    lotSize = riskAmount / (stopDistancePips * pipValuePerLot);
-                    
-                    const stopDistancePrice = Math.abs(entryPrice - slPrice);
-                    const tpDistancePrice = stopDistancePrice * rrRatio;
-                    const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
-
-                    rewardResult.textContent = '$' + rewardAmount.toFixed(2);
-                    lotSizeResult.textContent = lotSize.toFixed(2);
-                    rrRatioResult.textContent = '1:' + rrRatio.toFixed(0); 
-                    tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
-                    
-                    rewardResultItem.classList.remove('hidden');
-                    lotSizeResultItem.classList.remove('hidden');
-                    rrRatioResultItem.classList.remove('hidden');
-                    tpPriceResultItem.classList.remove('hidden');
-
-                } else if (calcMode === 'lot-size') { 
-                    const lotSizeInputVal = parseFloat(lotSizeInput.value);
-                    const rewardAmount = parseFloat(desiredProfitInput.value);
-
-                    if (isNaN(entryPrice) || isNaN(lotSizeInputVal) || isNaN(rewardAmount)) {
-                        showError("Please fill in all number fields."); return;
-                    }
-                    if (lotSizeInputVal <= 0) {
-                        showError("Lot Size must be greater than 0."); return;
-                    }
-                    if (rewardAmount <= 0) {
-                        showError("Profit Target must be greater than 0."); return;
-                    }
-
-                    let tpDistancePrice;
-                    
-                    let pipsToProfit = rewardAmount / (lotSizeInputVal * pipValuePerLot);
-                    tpDistancePrice = pipsToProfit * pointValue;
-                    
-                    const tpPrice = (direction === 'buy') ? entryPrice + tpDistancePrice : entryPrice - tpDistancePrice;
-
-                    tpPriceResult.textContent = tpPrice.toFixed(decimalPlaces);
-                    
-                    rewardResult.textContent = '';
-                    lotSizeResult.textContent = '';
-                    rrRatioResult.textContent = '';
-                    
-                    rewardResultItem.classList.add('hidden');
-                    lotSizeResultItem.classList.add('hidden');
-                    rrRatioResultItem.classList.add('hidden');
-                    tpPriceResultItem.classList.remove('hidden');
-                }
-
-                resultsDiv.style.display = 'block'; 
-                resultsDiv.scrollIntoView({ behavior: 'smooth' });
-                
-            });
-            
-            resetButton.addEventListener('click', () => {
-                form.reset();
-                resultsDiv.style.display = 'none';
-                clearError();
-                calcModeSelect.value = 'rr';
-                updateVisibleFields(); 
-            });
-
-            function showError(message) {
-                errorMessage.textContent = message;
-                resultsDiv.style.display = 'none'; 
-            }
-            function clearError() {
-                errorMessage.textContent = '';
-            }
-            
-            // --- Initialize field visibility on page load ---
-            updateVisibleFields();
-            
-            
-            /* ========================================
-               TABS & COMPOUND CALC (RESTORED)
-            ========================================
-            */
-
-            // --- TAB SWITCHING LOGIC ---
-            const tabPosition = document.getElementById('tab-position-calc');
-            const tabCompound = document.getElementById('tab-compound-calc');
-            const tabCalendar = document.getElementById('tab-calendar-calc'); 
-            
-            const wrapperPosition = document.getElementById('position-calc-wrapper');
-            const wrapperCompound = document.getElementById('compound-calc-wrapper');
-            const wrapperCalendar = document.getElementById('calendar-calc-wrapper'); 
-
-            tabPosition.addEventListener('click', () => {
-                tabPosition.classList.add('active');
-                tabCompound.classList.remove('active');
-                tabCalendar.classList.remove('active');
-                wrapperPosition.classList.remove('hidden');
-                wrapperCompound.classList.add('hidden');
-                wrapperCalendar.classList.add('hidden');
-            });
-
-            tabCompound.addEventListener('click', () => {
-                tabPosition.classList.remove('active');
-                tabCompound.classList.add('active');
-                tabCalendar.classList.remove('active');
-                wrapperPosition.classList.add('hidden');
-                wrapperCompound.classList.remove('hidden');
-                wrapperCalendar.classList.add('hidden');
-            });
-            
-            tabCalendar.addEventListener('click', () => {
-                tabPosition.classList.remove('active');
-                tabCompound.classList.remove('active');
-                tabCalendar.classList.add('active');
-                wrapperPosition.classList.add('hidden');
-                wrapperCompound.classList.add('hidden');
-                wrapperCalendar.classList.remove('hidden');
-            });
-
-
-            // --- COMPOUNDING CALCULATOR LOGIC ---
-            const compoundCalcBtn = document.getElementById('compound-calc-btn');
-            const compoundError = document.getElementById('error-message-compound');
-            const startBalanceInput = document.getElementById('compound-start-balance');
-            const periodsInput = document.getElementById('compound-periods');
-            const gainInput = document.getElementById('compound-gain');
-            const summaryDiv = document.getElementById('compound-summary');
-            const tableDiv = document.getElementById('compound-table');
-
-            compoundCalcBtn.addEventListener('click', () => {
-                const tableBody = document.getElementById('compound-table-body');
-                const endingBalanceSpan = document.getElementById('compound-ending-balance');
-                const totalGainSpan = document.getElementById('compound-total-gain');
-
-                const startBalance = parseFloat(startBalanceInput.value);
-                const periods = parseInt(periodsInput.value);
-                const gainPercent = parseFloat(gainInput.value) / 100;
-
-                if (isNaN(startBalance) || isNaN(periods) || isNaN(gainPercent) || startBalance <= 0 || periods <= 0 || gainPercent <= 0) {
-                    compoundError.textContent = "Please enter valid positive numbers in all fields.";
-                    summaryDiv.classList.add('hidden');
-                    tableDiv.classList.add('hidden');
-                    return;
-                }
-                
-                compoundError.textContent = ''; 
-                
-                let currentBalance = startBalance;
-                let tableHtml = ""; 
-                let cumulativeGain = 0;
-
-                for (let i = 1; i <= periods; i++) {
-                    let periodStartBalance = currentBalance;
-                    let gainAmount = currentBalance * gainPercent;
-                    currentBalance += gainAmount;
-                    cumulativeGain = ((currentBalance / startBalance) - 1) * 100;
-                    
-                    tableHtml += `
-                        <div class="table-row">
-                            <span>${i}</span>
-                            <span>$${periodStartBalance.toFixed(2)}</span>
-                            <span>${cumulativeGain.toFixed(2)}%</span> 
-                            <span>$${currentBalance.toFixed(2)}</span>
-                        </div>
-                    `;
-                }
-                
-                const totalGain = ((currentBalance / startBalance) - 1) * 100;
-
-                endingBalanceSpan.textContent = `$${currentBalance.toFixed(2)}`;
-                totalGainSpan.textContent = `${totalGain.toFixed(2)}%`;
-                tableBody.innerHTML = tableHtml; 
-
-                summaryDiv.classList.remove('hidden');
-                tableDiv.classList.remove('hidden');
-            });
-
-            // Clear compound error on input
-            [startBalanceInput, periodsInput, gainInput].forEach(input => {
-                input.addEventListener('input', () => {
-                    if (compoundError.textContent) {
-                        compoundError.textContent = '';
-                    }
-                });
-            });
-            
-        }); 
-    </script>
+        <div class="footer">
+            <p>Risk Warning: Trading involves substantial risks, including complete possible loss of funds and other losses and is not suitable for everyone.</p>
+            <p>©2025 - ApexFX | <a href="https://apexfxedge.github.io/traders-edge/privacy.html" target="_blank">Privacy Policy</a></p>
+        </div>
+    </div>
     
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/traders-edge/sw.js')
-        .then(reg => console.log('Service worker registered.'))
-        .catch(err => console.log('Service worker registration failed: ', err));
-    });
-  }
-</script>
-
-</body>
+    </body>
 </html>
-
-
