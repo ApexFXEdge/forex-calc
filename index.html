@@ -69,11 +69,9 @@
             color: var(--aqua-blue);
         }
 
-        /* --- THIS IS THE FIX FOR THE "JUMP" --- */
         #calculator-form, #compound-form, #calendar-form, #journal-form {
-            margin-block-start: 0; /* Removes default top margin from all forms */
+            margin-block-start: 0; 
         }
-        /* --- END OF FIX --- */
 
         .input-group {
             margin-bottom: 20px;
@@ -126,7 +124,7 @@
             padding: 12px;
             border: none;
             border-radius: 8px;
-            font-size: 1em;
+            font-size: 0.8em;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -611,8 +609,41 @@
                 </div>
                 <div class="input-grid">
                     <div class="input-group">
-                        <label for="journal-pair">Pair</label>
-                        <input type="text" id="journal-pair" placeholder="e.g., EURUSD">
+                        <label for="journal-pair">Instrument</label>
+                        <select id="journal-pair">
+                            <option value="AUD/CAD">AUD/CAD</option>
+                            <option value="AUD/CHF">AUD/CHF</option>
+                            <option value="AUD/JPY">AUD/JPY</option>
+                            <option value="AUD/NZD">AUD/NZD</option>
+                            <option value="AUD/USD">AUD/USD</option>
+                            <option value="BTC/USD">BTC/USD</option>
+                            <option value="CAD/CHF">CAD/CHF</option>
+                            <option value="CAD/JPY">CAD/JPY</option>
+                            <option value="CHF/JPY">CHF/JPY</option>
+                            <option value="EUR/AUD">EUR/AUD</option>
+                            <option value="EUR/CAD">EUR/CAD</option>
+                            <option value="EUR/CHF">EUR/CHF</option>
+                            <option value="EUR/GBP">EUR/GBP</option>
+                            <option value="EUR/JPY">EUR/JPY</option>
+                            <option value="EUR/NZD">EUR/NZD</option>
+                            <option value="EUR/USD">EUR/USD</option>
+                            <option value="GBP/AUD">GBP/AUD</option>
+                            <option value="GBP/CAD">GBP/CAD</option>
+                            <option value="GBP/CHF">GBP/CHF</option>
+                            <option value="GBP/JPY">GBP/JPY</option>
+                            <option value="GBP/NZD">GBP/NZD</option>
+                            <option value="GBP/USD">GBP/USD</option>
+                            <option value="NAS100">NAS100</option>
+                            <option value="NZD/CAD">NZD/CAD</option>
+                            <option value="NZD/CHF">NZD/CHF</option>
+                            <option value="NZD/JPY">NZD/JPY</option>
+                            <option value="NZD/USD">NZD/USD</option>
+                            <option value="US30">US30</option>
+                            <option value="USD/CAD">USD/CAD</option>
+                            <option value="USD/CHF">USD/CHF</option>
+                            <option value="USD/JPY">USD/JPY</option>
+                            <option value="XAU/USD">XAU/USD (Gold)</option>
+                        </select>
                     </div>
                     <div class="input-group">
                         <label for="journal-position">Position</label>
@@ -1180,6 +1211,7 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
+      // --- FIXED: Corrected sw.js path ---
       navigator.serviceWorker.register('/traders-edge/sw.js')
         .then(reg => console.log('Service worker registered.'))
         .catch(err => console.log('Service worker registration failed: ', err));
