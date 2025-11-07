@@ -13,7 +13,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Apex FX Trader's Edge - Free Forex Tools<</title>
+    <title>Apex FX - Trader's Edge</title>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
@@ -45,7 +45,7 @@
             padding: 20px;
             
             /* --- BACKGROUND IMAGE PATH FIXED --- */
-            background-image: url('images/bg_trading_chart.png'); /* Adjust path if needed */
+            background-image: url('/traders-edge/images/bg_trading_chart.png'); 
             background-size: cover;
             background-position: center center;
             background-repeat: no-repeat;
@@ -608,8 +608,7 @@
                 } catch (error) {
                     console.error('Failed to fetch exchange rate:', error);
                     showError(`Could not fetch exchange rates.`);
-                    // Fallback rates
-                    return { "USD": 1.0, "JPY": 150.0, "CAD": 1.35, "CHF": 0.90, "AUD": 0.66, "EUR": 1.08, "GBP": 1.25, "NZD": 0.61 };
+                    return null;
                 }
             }
             
@@ -642,7 +641,6 @@
                      return;
                 }
                 
-                // This is the single, universal formula for pip value in USD
                 pipValuePerLot = (pointValue * contractSize) / usdToQuoteRate;
 
                 // Special override for indices and gold
@@ -875,7 +873,3 @@
 
 </body>
 </html>
-
-
-
-
