@@ -1,4 +1,4 @@
-const cacheName = 'traders-edge-v1'; // Renamed cache
+const cacheName = 'traders-edge'; // Renamed cache
 const filesToCache = [
     '/traders-edge/',
     '/traders-edge/index.html',
