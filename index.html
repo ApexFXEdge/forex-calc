@@ -70,7 +70,11 @@
             color: var(--aqua-blue);
         }
 
-      
+        /* --- THIS IS THE FIX FOR THE "JUMP" --- */
+        #calculator-form, #compound-form, #calendar-form {
+            margin-block-start: 0; /* Removes default top margin from all forms */
+        }
+        /* --- END OF FIX --- */
 
         .input-group {
             margin-bottom: 20px;
@@ -436,17 +440,15 @@
                     <label for="compound-start-balance">Starting balance</label>
                     <input type="number" id="compound-start-balance" placeholder="e.g., 20000">
                 </div>
-                <div class="button-group">
-                    <div class="input-group">
-                        <label for="compound-periods">Number of periods</label>
-                        <input type="number" id="compound-periods" placeholder="e.g., 12">
-                    </div>
-                    <div class="input-group">
-                        <label for="compound-gain">Gain % per period</label>
-                        <input type="number" id="compound-gain" placeholder="e.g., 5">
-                    </div>
-                </div>
                 
+                <div class="input-group">
+                    <label for="compound-periods">Number of periods</label>
+                    <input type="number" id="compound-periods" placeholder="e.g., 12">
+                </div>
+                <div class="input-group">
+                    <label for="compound-gain">Gain % per period</label>
+                    <input type="number" id="compound-gain" placeholder="e.g., 5">
+                </div>
                 <div id="error-message-compound"></div>
 
                 <div class="button-group single">
@@ -869,6 +871,3 @@
 
 </body>
 </html>
-
-
-
