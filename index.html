@@ -26,7 +26,7 @@
             --label-color: #a0a0a0;
             --border-color: #444;
             --success-color: #28a745;
-            --danger-color: #dc3545; /* Added for delete buttons */
+            --danger-color: #dc3545; 
             --aqua-blue: #00FFFF;
         }
 
@@ -124,7 +124,7 @@
             padding: 12px;
             border: none;
             border-radius: 8px;
-            font-size: 0.8em;
+            font-size: 0.9em; /* --- MADE FONT SMALLER --- */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -230,9 +230,9 @@
             background-color: var(--bg-color);
         }
         .calc-tab {
-            width: 25%; /* <-- UPDATED for 4 tabs */
+            width: 25%; 
             padding: 12px 5px; 
-            font-size: 0.8em;  /* <-- Made font smaller for 4 tabs */
+            font-size: 0.8em; 
             font-weight: 600;
             border: none;
             background-color: transparent;
@@ -316,6 +316,14 @@
         #journal-save-btn {
             background-color: var(--primary-color);
             color: #1a1a1a;
+            font-size: 1em; /* Make Save button normal size */
+        }
+        #journal-export-btn { /* NEW BUTTON STYLE */
+            background-color: var(--border-color);
+            color: var(--text-color);
+        }
+        #journal-export-btn:hover {
+            background-color: #555;
         }
         #journal-clear-btn {
              background-color: var(--danger-color);
@@ -323,7 +331,7 @@
         }
         .journal-table-container {
             width: 100%;
-            overflow-x: auto; /* Allows horizontal scrolling */
+            overflow-x: auto; 
             margin-top: 25px;
             border: 1px solid var(--border-color);
             border-radius: 8px;
@@ -331,7 +339,7 @@
         #journal-table {
             width: 100%;
             border-collapse: collapse;
-            white-space: nowrap; /* Prevents text from wrapping */
+            white-space: nowrap; 
         }
         #journal-table th, #journal-table td {
             padding: 12px 10px;
@@ -362,8 +370,8 @@
             text-decoration: none;
         }
         #journal-table .notes-cell {
-            white-space: pre-wrap; /* Allows notes to wrap */
-            min-width: 200px; /* Gives notes some space */
+            white-space: pre-wrap; 
+            min-width: 200px; 
         }
         #journal-table .delete-btn {
             background-color: var(--border-color);
@@ -686,11 +694,21 @@
 
                 <div id="error-message-journal"></div>
                 
-                <div class="button-group">
+                <div class="button-group single">
                     <button type="submit" id="journal-save-btn">Save Trade</button>
+                </div>
+                <div class="button-group">
+                    <button type="button" id="journal-export-btn">Export All (CSV)</button>
                     <button type="button" id="journal-clear-btn">Clear All</button>
                 </div>
-            </form>
+                </form>
+            
+            <div class="affiliate-links">
+                <h3>Recommended Partners</h3>
+                <a href="https://www.tradingview.com/pricing/?share_your_love=JoeLopezFX" target="_blank">TRADINGVIEW</a>
+                <a href="https://herofx.co/?partner_code=2969613" target="_blank">HEROFX</a>
+                <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
+            </div>
             
             <div class="journal-table-container">
                 <table id="journal-table">
@@ -1090,6 +1108,7 @@
             const journalTableBody = document.getElementById('journal-table-body');
             const journalError = document.getElementById('error-message-journal');
             const journalClearBtn = document.getElementById('journal-clear-btn');
+            const journalExportBtn = document.getElementById('journal-export-btn'); // NEW
             
             const journalDay = document.getElementById('journal-day');
             const journalDate = document.getElementById('journal-date');
@@ -1118,12 +1137,12 @@
                 }
                 
                 // Sort by date descending
-                trades.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+                trades.sort((a, b) => (new Date(b.date + ' ' + (b.time || '00:00'))) - (new Date(a.date + ' ' + (a.time || '00:00'))));
+
                 
                 trades.forEach(trade => {
                     const row = document.createElement('tr');
                     
-                    // Add class for Win/Loss color
                     let wlClass = '';
                     if (trade.winLoss === 'Win') wlClass = 'win';
                     if (trade.winLoss === 'Loss') wlClass = 'loss';
@@ -1136,7 +1155,7 @@
                         <td class="${wlClass}">${trade.winLoss}</td>
                         <td>${trade.result}</td>
                         <td>${trade.strategy}</td>
-                        <td class="link-cell"><a href="${trade.link}" target="_blank">View</a></td>
+                        <td class="link-cell">${trade.link ? `<a href="${trade.link}" target="_blank">View</a>` : ''}</td>
                         <td class="notes-cell">${trade.notes}</td>
                         <td><button class="delete-btn" data-id="${trade.id}">X</button></td>
                     `;
@@ -1151,9 +1170,8 @@
                 e.preventDefault();
                 journalError.textContent = '';
 
-                // Get all values
                 const newTrade = {
-                    id: new Date().getTime(), // Unique ID
+                    id: new Date().getTime(), 
                     day: document.getElementById('journal-day').value,
                     date: document.getElementById('journal-date').value,
                     time: document.getElementById('journal-time').value,
@@ -1168,20 +1186,18 @@
                     notes: document.getElementById('journal-notes').value
                 };
 
-                // Simple validation
                 if (!newTrade.date || !newTrade.pair || !newTrade.result) {
                     journalError.textContent = 'Please fill in at least Date, Pair, and Result.';
                     return;
                 }
 
-                // Get, update, and save back to localStorage
                 const trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
                 trades.push(newTrade);
                 localStorage.setItem('apex_trades', JSON.stringify(trades));
                 
-                renderJournal(); // Re-render the table
-                journalForm.reset(); // Clear the form
-                setTodayDate(); // Re-fill the date
+                renderJournal(); 
+                journalForm.reset(); 
+                setTodayDate(); 
             });
             
             // --- Delete a Trade (Event Delegation) ---
@@ -1192,7 +1208,7 @@
                         let trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
                         trades = trades.filter(trade => trade.id != tradeId);
                         localStorage.setItem('apex_trades', JSON.stringify(trades));
-                        renderJournal(); // Re-render
+                        renderJournal(); 
                     }
                 }
             });
@@ -1201,8 +1217,72 @@
             journalClearBtn.addEventListener('click', () => {
                 if (confirm('ARE YOU SURE?\nThis will delete your entire trade journal forever.')) {
                     localStorage.removeItem('apex_trades');
-                    renderJournal(); // Re-render the empty table
+                    renderJournal(); 
                 }
+            });
+            
+            // --- NEW: EXPORT JOURNAL LOGIC ---
+            journalExportBtn.addEventListener('click', () => {
+                const trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
+                
+                if (trades.length === 0) {
+                    alert('Your trade journal is empty. Nothing to export.');
+                    return;
+                }
+
+                // 1. Define CSV Headers
+                const headers = [
+                    'Day', 'Date', 'Time', 'Session', 'Pair', 'Position', 
+                    'Strategy', 'Risk', 'Result', 'Win/Loss', 'Tradingivew Link', 'Notes'
+                ];
+                
+                // Function to escape commas in a field
+                const escapeCSV = (field) => {
+                    if (field === null || field === undefined) return '';
+                    let str = String(field);
+                    // If field contains a comma, a quote, or a newline, wrap it in double quotes
+                    if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                        // Escape existing double quotes by doubling them
+                        str = str.replace(/"/g, '""');
+                        // Wrap the entire field in double quotes
+                        str = `"${str}"`;
+                    }
+                    return str;
+                };
+
+                // 2. Convert JSON to CSV rows
+                let csvContent = headers.join(',') + '\r\n'; // Header row
+                
+                trades.forEach(trade => {
+                    const row = [
+                        escapeCSV(trade.day),
+                        escapeCSV(trade.date),
+                        escapeCSV(trade.time),
+                        escapeCSV(trade.session),
+                        escapeCSV(trade.pair),
+                        escapeCSV(trade.position),
+                        escapeCSV(trade.strategy),
+                        escapeCSV(trade.risk),
+                        escapeCSV(trade.result),
+                        escapeCSV(trade.winLoss),
+                        escapeCSV(trade.link),
+                        escapeCSV(trade.notes)
+                    ].join(',');
+                    csvContent += row + '\r\n';
+                });
+
+                // 3. Create and trigger download
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                
+                link.setAttribute('href', url);
+                link.setAttribute('download', 'apex_fx_journal.csv');
+                link.style.visibility = 'hidden';
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             });
             
         }); 
@@ -1211,7 +1291,6 @@
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      // --- FIXED: Corrected sw.js path ---
       navigator.serviceWorker.register('/traders-edge/sw.js')
         .then(reg => console.log('Service worker registered.'))
         .catch(err => console.log('Service worker registration failed: ', err));
