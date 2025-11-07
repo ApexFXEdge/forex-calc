@@ -62,11 +62,10 @@
             color: var(--aqua-blue);
         }
         
-        /* --- THIS IS THE FIX --- */
-        #calculator-form {
-            margin-block-start: 0; /* Removes default top margin */
-        }
-        /* --- END OF FIX --- */
+       /* --- THIS IS THE FIX FOR THE "JUMP" --- */
+#calculator-form, #compound-form, #calendar-form {
+    margin-block-start: 0; /* Removes default top margin from all forms */
+}
 
         .input-group {
             margin-bottom: 20px;
@@ -245,7 +244,7 @@
             justify-content: space-around;
             text-align: center;
             padding: 20px 0;
-            margin-top: 10px;
+            margin-top: 20px;
             border-top: 1px solid var(--border-color);
             border-bottom: 1px solid var(--border-color);
         }
@@ -865,4 +864,5 @@
 
 </body>
 </html>
+
 
