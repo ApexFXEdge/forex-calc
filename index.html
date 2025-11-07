@@ -69,9 +69,11 @@
             color: var(--aqua-blue);
         }
 
+        /* --- THIS IS THE FIX FOR THE "JUMP" --- */
         #calculator-form, #compound-form, #calendar-form, #journal-form {
-            margin-block-start: 0; 
+            margin-block-start: 0; /* Removes default top margin from all forms */
         }
+        /* --- END OF FIX --- */
 
         .input-group {
             margin-bottom: 20px;
@@ -572,6 +574,112 @@
                     <a href="https://checkout.aquafunded.com/ref/5255/?campaign=Apex%20FX%20Edge" target="_blank">AQUAFUNDED</a>
                 </div>
             </form>
+        </div> <div id="journal-wrapper" class="hidden">
+            <form id="journal-form">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="journal-day">Day</label>
+                        <select id="journal-day">
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="journal-date">Date</label>
+                        <input type="date" id="journal-date">
+                    </div>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="journal-time">Time</label>
+                        <input type="time" id="journal-time">
+                    </div>
+                    <div class="input-group">
+                        <label for="journal-session">Session</label>
+                        <select id="journal-session">
+                            <option value="London">London</option>
+                            <option value="New York">New York</option>
+                            <option value="Tokyo">Tokyo</option>
+                            <option value="Sydney">Sydney</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="journal-pair">Pair</label>
+                        <input type="text" id="journal-pair" placeholder="e.g., EURUSD">
+                    </div>
+                    <div class="input-group">
+                        <label for="journal-position">Position</label>
+                        <select id="journal-position">
+                            <option value="Buy">Buy</option>
+                            <option value="Sell">Sell</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="journal-strategy">Strategy</label>
+                    <input type="text" id="journal-strategy" placeholder="e.g., Break/Retest">
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label for="journal-risk">Risk ($)</label>
+                        <input type="number" step="any" id="journal-risk" placeholder="e.g., 50">
+                    </div>
+                    <div class="input-group">
+                        <label for="journal-result">Result ($)</label>
+                        <input type="number" step="any" id="journal-result" placeholder="e.g., 200">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label for="journal-win-loss">Win/Loss</label>
+                    <select id="journal-win-loss">
+                        <option value="Win">Win</option>
+                        <option value="Loss">Loss</option>
+                        <option value="Breakeven">Breakeven</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label for="journal-link">TradingView Link</label>
+                    <input type="url" id="journal-link" placeholder="https://www.tradingview.com/...">
+                </div>
+                <div class="input-group">
+                    <label for="journal-notes">Notes</label>
+                    <textarea id="journal-notes" placeholder="Why did I take this trade?"></textarea>
+                </div>
+
+                <div id="error-message-journal"></div>
+                
+                <div class="button-group">
+                    <button type="submit" id="journal-save-btn">Save Trade</button>
+                    <button type="button" id="journal-clear-btn">Clear All</button>
+                </div>
+            </form>
+            
+            <div class="journal-table-container">
+                <table id="journal-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Pair</th>
+                            <th>Pos</th>
+                            <th>W/L</th>
+                            <th>Result</th>
+                            <th>Strategy</th>
+                            <th>Link</th>
+                            <th>Notes</th>
+                            <th></th> </tr>
+                    </thead>
+                    <tbody id="journal-table-body">
+                        </tbody>
+                </table>
+            </div>
+
         </div> <div style="text-align: center; padding-top: 25px; font-size: 0.9em;">
             <a href="privacy.html" target="_blank" style="color: #999; text-decoration: underline;">Privacy Policy</a>
         </div>
@@ -613,10 +721,8 @@
             
             const pairTypeSelect = document.getElementById('pair-type');
             
-            // --- Function to manage all field visibility ---
             function updateVisibleFields() {
                 const calcMode = calcModeSelect.value;
-
                 resultsDiv.style.display = 'none';
                 clearError();
                 
@@ -649,7 +755,6 @@
             
             calcModeSelect.addEventListener('change', updateVisibleFields);
             
-            // --- API KEY AND FETCH FUNCTION ---
             const API_KEY = '5bc51041ac42f88a6bb3e07b'; 
             
             async function getRatesFromApi() {
@@ -663,9 +768,7 @@
                 try {
                     errorMessage.textContent = `Getting live exchange rates...`;
                     const response = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/USD`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
+                    if (!response.ok) throw new Error('Network response was not ok');
                     const data = await response.json();
                     
                     if (data.result === 'success') {
@@ -717,12 +820,9 @@
                 
                 pipValuePerLot = (pointValue * contractSize) / usdToQuoteRate;
 
-                // Special override for indices and gold
                 if (pairType === 'indices' || pairType === 'gold') {
                     pipValuePerLot = contractSize * pointValue;
                 }
-
-                // --- Run calculations based on selected mode ---
 
                 if (calcMode === 'rr') { 
                     const slPrice = parseFloat(slPriceInput.value);
@@ -749,7 +849,6 @@
                     rewardAmount = riskAmount * rrRatio;
                     
                     const stopDistancePips = Math.abs(entryPrice - slPrice) / pointValue;
-                    
                     lotSize = riskAmount / (stopDistancePips * pipValuePerLot);
                     
                     const stopDistancePrice = Math.abs(entryPrice - slPrice);
@@ -781,7 +880,6 @@
                     }
 
                     let tpDistancePrice;
-                    
                     let pipsToProfit = rewardAmount / (lotSizeInputVal * pipValuePerLot);
                     tpDistancePrice = pipsToProfit * pointValue;
                     
@@ -820,12 +918,11 @@
                 errorMessage.textContent = '';
             }
             
-            // --- Initialize field visibility on page load ---
             updateVisibleFields();
             
             
             /* ========================================
-               TABS & COMPOUND CALC (RESTORED)
+               TABS & OTHER CALCS (RESTORED)
             ========================================
             */
 
@@ -833,36 +930,59 @@
             const tabPosition = document.getElementById('tab-position-calc');
             const tabCompound = document.getElementById('tab-compound-calc');
             const tabCalendar = document.getElementById('tab-calendar-calc'); 
+            const tabJournal = document.getElementById('tab-journal'); // NEW
             
             const wrapperPosition = document.getElementById('position-calc-wrapper');
             const wrapperCompound = document.getElementById('compound-calc-wrapper');
             const wrapperCalendar = document.getElementById('calendar-calc-wrapper'); 
+            const wrapperJournal = document.getElementById('journal-wrapper'); // NEW
 
             tabPosition.addEventListener('click', () => {
                 tabPosition.classList.add('active');
                 tabCompound.classList.remove('active');
                 tabCalendar.classList.remove('active');
+                tabJournal.classList.remove('active');
+                
                 wrapperPosition.classList.remove('hidden');
                 wrapperCompound.classList.add('hidden');
                 wrapperCalendar.classList.add('hidden');
+                wrapperJournal.classList.add('hidden');
             });
 
             tabCompound.addEventListener('click', () => {
                 tabPosition.classList.remove('active');
                 tabCompound.classList.add('active');
                 tabCalendar.classList.remove('active');
+                tabJournal.classList.remove('active');
+                
                 wrapperPosition.classList.add('hidden');
                 wrapperCompound.classList.remove('hidden');
                 wrapperCalendar.classList.add('hidden');
+                wrapperJournal.classList.add('hidden');
             });
             
             tabCalendar.addEventListener('click', () => {
                 tabPosition.classList.remove('active');
                 tabCompound.classList.remove('active');
                 tabCalendar.classList.add('active');
+                tabJournal.classList.remove('active');
+                
                 wrapperPosition.classList.add('hidden');
                 wrapperCompound.classList.add('hidden');
                 wrapperCalendar.classList.remove('hidden');
+                wrapperJournal.classList.add('hidden');
+            });
+            
+            tabJournal.addEventListener('click', () => {
+                tabPosition.classList.remove('active');
+                tabCompound.classList.remove('active');
+                tabCalendar.classList.remove('active');
+                tabJournal.classList.add('active');
+                
+                wrapperPosition.classList.add('hidden');
+                wrapperCompound.classList.add('hidden');
+                wrapperCalendar.classList.add('hidden');
+                wrapperJournal.classList.remove('hidden');
             });
 
 
@@ -923,7 +1043,6 @@
                 tableDiv.classList.remove('hidden');
             });
 
-            // Clear compound error on input
             [startBalanceInput, periodsInput, gainInput].forEach(input => {
                 input.addEventListener('input', () => {
                     if (compoundError.textContent) {
@@ -932,13 +1051,135 @@
                 });
             });
             
+            /* ========================================
+               NEW JOURNAL LOGIC
+            ========================================
+            */
+            const journalForm = document.getElementById('journal-form');
+            const journalTableBody = document.getElementById('journal-table-body');
+            const journalError = document.getElementById('error-message-journal');
+            const journalClearBtn = document.getElementById('journal-clear-btn');
+            
+            const journalDay = document.getElementById('journal-day');
+            const journalDate = document.getElementById('journal-date');
+            
+            // --- Auto-fill Day and Date ---
+            function setTodayDate() {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                journalDate.value = `${yyyy}-${mm}-${dd}`;
+                
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                journalDay.value = days[today.getDay()];
+            }
+            setTodayDate(); // Call it on load
+            
+            // --- Load and Display Trades from localStorage ---
+            function renderJournal() {
+                const trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
+                journalTableBody.innerHTML = ''; // Clear table
+                
+                if (trades.length === 0) {
+                    journalTableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; color: var(--label-color);">No trades logged yet.</td></tr>';
+                    return;
+                }
+                
+                // Sort by date descending
+                trades.sort((a, b) => new Date(b.date + ' ' + b.time) - new Date(a.date + ' ' + a.time));
+                
+                trades.forEach(trade => {
+                    const row = document.createElement('tr');
+                    
+                    // Add class for Win/Loss color
+                    let wlClass = '';
+                    if (trade.winLoss === 'Win') wlClass = 'win';
+                    if (trade.winLoss === 'Loss') wlClass = 'loss';
+                    if (trade.winLoss === 'Breakeven') wlClass = 'be';
+                    
+                    row.innerHTML = `
+                        <td>${trade.date}</td>
+                        <td>${trade.pair}</td>
+                        <td>${trade.position}</td>
+                        <td class="${wlClass}">${trade.winLoss}</td>
+                        <td>${trade.result}</td>
+                        <td>${trade.strategy}</td>
+                        <td class="link-cell"><a href="${trade.link}" target="_blank">View</a></td>
+                        <td class="notes-cell">${trade.notes}</td>
+                        <td><button class="delete-btn" data-id="${trade.id}">X</button></td>
+                    `;
+                    journalTableBody.appendChild(row);
+                });
+            }
+            
+            renderJournal(); // Call on page load
+
+            // --- Save a new Trade ---
+            journalForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                journalError.textContent = '';
+
+                // Get all values
+                const newTrade = {
+                    id: new Date().getTime(), // Unique ID
+                    day: document.getElementById('journal-day').value,
+                    date: document.getElementById('journal-date').value,
+                    time: document.getElementById('journal-time').value,
+                    session: document.getElementById('journal-session').value,
+                    pair: document.getElementById('journal-pair').value,
+                    position: document.getElementById('journal-position').value,
+                    strategy: document.getElementById('journal-strategy').value,
+                    risk: document.getElementById('journal-risk').value,
+                    result: document.getElementById('journal-result').value,
+                    winLoss: document.getElementById('journal-win-loss').value,
+                    link: document.getElementById('journal-link').value,
+                    notes: document.getElementById('journal-notes').value
+                };
+
+                // Simple validation
+                if (!newTrade.date || !newTrade.pair || !newTrade.result) {
+                    journalError.textContent = 'Please fill in at least Date, Pair, and Result.';
+                    return;
+                }
+
+                // Get, update, and save back to localStorage
+                const trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
+                trades.push(newTrade);
+                localStorage.setItem('apex_trades', JSON.stringify(trades));
+                
+                renderJournal(); // Re-render the table
+                journalForm.reset(); // Clear the form
+                setTodayDate(); // Re-fill the date
+            });
+            
+            // --- Delete a Trade (Event Delegation) ---
+            journalTableBody.addEventListener('click', (e) => {
+                if (e.target.classList.contains('delete-btn')) {
+                    const tradeId = e.target.dataset.id;
+                    if (confirm('Are you sure you want to delete this trade?')) {
+                        let trades = JSON.parse(localStorage.getItem('apex_trades') || '[]');
+                        trades = trades.filter(trade => trade.id != tradeId);
+                        localStorage.setItem('apex_trades', JSON.stringify(trades));
+                        renderJournal(); // Re-render
+                    }
+                }
+            });
+            
+            // --- Clear All Trades ---
+            journalClearBtn.addEventListener('click', () => {
+                if (confirm('ARE YOU SURE?\nThis will delete your entire trade journal forever.')) {
+                    localStorage.removeItem('apex_trades');
+                    renderJournal(); // Re-render the empty table
+                }
+            });
+            
         }); 
     </script>
     
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      // --- FIXED: Corrected sw.js path ---
       navigator.serviceWorker.register('/traders-edge/sw.js')
         .then(reg => console.log('Service worker registered.'))
         .catch(err => console.log('Service worker registration failed: ', err));
